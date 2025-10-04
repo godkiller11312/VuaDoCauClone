@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Vuadocau.Web.Models.Product>
+@{
+	ViewData["Title"] = "Sản phẩm";
+	var cat = ViewBag.Cat as string;
+	var cats = ViewBag.Categories as IEnumerable<Vuadocau.Web.Models.Category>;
+}
+<h1 class="h4 mb-3">Sản phẩm @if(!string.IsNullOrEmpty(cat)){
+<text>- @cats!.First(x => x.Slug == cat).Name</text>
+}
+</h1>
+<div class="row row-cols-1 row-cols-md-4 g-3">
+	@foreach (var p in Model)
+	{
+		<div class="col">
+			<div class="card h-100">
+				<img class="card-img-top" src="@p.ImageUrl" alt="@p.Name" />
+				<div class="card-body">
+					<div class="small text-muted">@p.Category.Name</div>
+					<h6 class="card-title">@p.Name</h6>
+					<div class="fw-bold">@string.Format("{0:N0} đ", p.Price)</div>
+				</div>
+				<div class="card-footer bg-white">
+					<a class="btn btn-sm btn-outline-primary" asp-action="Detail" asp-route-slug="@p.Slug">Xem</a>
+				</div>
+			</div>
+		</div>
+	}
+</div>

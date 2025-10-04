@@ -1,0 +1,377 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\son\\source\\repos\\VuaDoCau\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\products\\detail.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\products\\detail.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\products\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\products\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\data\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\data\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\vuadocau.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\vuadocau.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\shared\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\shared\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\data\\vuadocaudbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\data\\vuadocaudbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T09:52:24.413Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Program.cs",
+              "RelativeDocumentMoniker": "VuaDoCau\\Program.cs",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Program.cs",
+              "RelativeToolTip": "VuaDoCau\\Program.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAIwCMAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T09:27:28.609Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\_ViewImports.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T09:52:19.276Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Products\\Index.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\Products\\Index.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Products\\Index.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\Products\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T09:46:44.283Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DbInitializer.cs",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Data\\DbInitializer.cs",
+              "RelativeDocumentMoniker": "VuaDoCau\\Data\\DbInitializer.cs",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Data\\DbInitializer.cs",
+              "RelativeToolTip": "VuaDoCau\\Data\\DbInitializer.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAgAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T09:42:53.262Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Detail.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Products\\Detail.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\Products\\Detail.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Products\\Detail.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\Products\\Detail.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T09:47:07.158Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Cart\\Index.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\Cart\\Index.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Cart\\Index.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\Cart\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T09:55:18.458Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Error.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Shared\\Error.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\Shared\\Error.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Shared\\Error.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\Shared\\Error.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T10:05:58.098Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAABgAAAAAAAAAAAAIwCsAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T09:52:43.827Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "_ValidationScriptsPartial.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAABTAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T09:53:01.726Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "VuaDoCau\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-02T09:53:22.668Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "VuaDoCau\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "VuaDoCau\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-10-02T09:55:50.998Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "VuaDoCau.csproj",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\VuaDoCau.csproj",
+              "RelativeDocumentMoniker": "VuaDoCau\\VuaDoCau.csproj",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\VuaDoCau.csproj",
+              "RelativeToolTip": "VuaDoCau\\VuaDoCau.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-02T10:00:02.099Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "VuaDoCau\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "VuaDoCau\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAswBIAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T09:51:46.743Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "VuaDoCau\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Properties\\launchSettings.json",
+              "RelativeToolTip": "VuaDoCau\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-02T09:50:05.963Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Category.cs",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Models\\Category.cs",
+              "RelativeDocumentMoniker": "VuaDoCau\\Models\\Category.cs",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Models\\Category.cs",
+              "RelativeToolTip": "VuaDoCau\\Models\\Category.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T09:40:23.406Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Product.cs",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Models\\Product.cs",
+              "RelativeDocumentMoniker": "VuaDoCau\\Models\\Product.cs",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Models\\Product.cs",
+              "RelativeToolTip": "VuaDoCau\\Models\\Product.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAuwAsAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T09:40:35.514Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "VuadocauDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Data\\VuadocauDbContext.cs",
+              "RelativeDocumentMoniker": "VuaDoCau\\Data\\VuadocauDbContext.cs",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Data\\VuadocauDbContext.cs",
+              "RelativeToolTip": "VuaDoCau\\Data\\VuadocauDbContext.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAswA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T09:42:41.204Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "VuaDoCau\\Controllers\\ProductsController.cs",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "VuaDoCau\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAADwvyEAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T09:43:11.509Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "CartController.cs",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Controllers\\CartController.cs",
+              "RelativeDocumentMoniker": "VuaDoCau\\Controllers\\CartController.cs",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Controllers\\CartController.cs",
+              "RelativeToolTip": "VuaDoCau\\Controllers\\CartController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T09:43:19.879Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\appsettings.json",
+              "RelativeDocumentMoniker": "VuaDoCau\\appsettings.json",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\appsettings.json",
+              "RelativeToolTip": "VuaDoCau\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-02T09:26:08.002Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "VuaDoCau\\appsettings.Development.json",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\appsettings.Development.json",
+              "RelativeToolTip": "VuaDoCau\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-02T09:26:23.652Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
