@@ -5,3 +5,11 @@
 .navbar-brand {
     letter-spacing: .3px;
 }
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+.accordion-button {
+    font-weight: 600;
+}

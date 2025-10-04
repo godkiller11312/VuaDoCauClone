@@ -1,5 +1,143 @@
-﻿@{
-	ViewData["Title"] = "Giỏ hàng";
+﻿@model List<VuaDoCau.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    decimal subtotal = (decimal)ViewBag.Subtotal;
+    decimal shipping = (decimal)ViewBag.Shipping;
+    decimal total = (decimal)ViewBag.Total;
 }
-<h1 class="h4">Giỏ hàng</h1>
-<p>Demo: chưa triển khai lưu giỏ. Có thể mở rộng dùng Session/Db.</p>;
+
+<h1 class="h4 text-center fw-bold my-3">GIỎ HÀNG (@Model.Count sản phẩm)</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Giỏ hàng trống. <a asp-controller="Products" asp-action="Index">Mua sắm ngay →</a></div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:60%">Sản phẩm</th>
+                            <th class="text-end">Giá</th>
+                            <th class="text-center" style="width:140px;">Số lượng</th>
+                            <th class="text-end">Tổng giá</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var it in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="@it.ImageUrl" style="width:60px;height:60px;object-fit:cover;border-radius:6px;" />
+                                        <div>@it.Name</div>
+                                    </div>
+                                </td>
+                                <td class="text-end">@string.Format("{0:N0}VND", it.Price)</td>
+                                <td class="text-center">
+                                    <form asp-action="Update" method="post" class="d-inline-flex">
+                                        <input type="hidden" name="id" value="@it.ProductId" />
+                                        <div class="input-group input-group-sm" style="max-width:120px;">
+                                            <input class="form-control text-center" type="number" name="qty" min="1" value="@it.Quantity" />
+                                            <button class="btn btn-outline-secondary" type="submit">Áp dụng</button>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td class="text-end fw-semibold">@string.Format("{0:N0}VND", it.LineTotal)</td>
+                                <td class="text-end">
+                                    <form asp-action="Remove" method="post">
+                                        <input type="hidden" name="id" value="@it.ProductId" />
+                                        <button class="btn btn-link text-danger p-0">✕</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex gap-2">
+                <form asp-action="Clear" method="post">
+                    <button class="btn btn-outline-secondary">Xóa giỏ hàng</button>
+                </form>
+                <a class="btn btn-outline-primary" asp-controller="Products" asp-action="Index">Mua tiếp</a>
+            </div>
+
+            <div class="mt-4">
+                <div class="accordion" id="infoAcc">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="sec1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c1">BẢO MẬT</button>
+                        </h2>
+                        <div id="c1" class="accordion-collapse collapse show" data-bs-parent="#infoAcc">
+                            <div class="accordion-body">
+                                Thông tin khách hàng được bảo mật theo chính sách của cửa hàng.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item mt-2">
+                        <h2 class="accordion-header" id="sec2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c2">VẬN CHUYỂN</button>
+                        </h2>
+                        <div id="c2" class="accordion-collapse collapse" data-bs-parent="#infoAcc">
+                            <div class="accordion-body">
+                                Giao hàng toàn quốc. Khách được kiểm tra hàng trước khi thanh toán.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item mt-2">
+                        <h2 class="accordion-header" id="sec3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c3">THANH TOÁN</button>
+                        </h2>
+                        <div id="c3" class="accordion-collapse collapse" data-bs-parent="#infoAcc">
+                            <div class="accordion-body">
+                                Thanh toán khi nhận hàng (COD) hoặc chuyển khoản ngân hàng. 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item mt-2">
+                        <h2 class="accordion-header" id="sec4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c4">LIÊN HỆ</button>
+                        </h2>
+                        <div id="c4" class="accordion-collapse collapse" data-bs-parent="#infoAcc">
+                            <div class="accordion-body">
+                                Hotline: 09xx xxx xxx — Zalo/FB: @@vuadocau (demo).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <aside class="col-lg-4">
+            <div class="card" style="border-color:#167a76;">
+                <div class="card-body">
+                    <div class="mb-3 small text-muted">
+                        Giao hàng toàn quốc, khách hàng được kiểm tra hàng trước khi trả tiền.
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <span>Tạm tính:</span>
+                        <strong>@string.Format("{0:N0}VND", subtotal)</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Vận chuyển:</span>
+                        <strong>@string.Format("{0:N0}VND", shipping)</strong>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between fs-5">
+                        <span><strong>Tổng cộng:</strong></span>
+                        <strong>@string.Format("{0:N0}VND", total)</strong>
+                    </div>
+
+                    <a class="btn btn-success w-100 mt-3">THANH TOÁN</a>
+                    <div class="text-muted small mt-2">* Đây chỉ là demo tính tổng. Phí ship có thể thay đổi khi chốt đơn.</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+}

@@ -1,18 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Vuadocau.Web.Models;
+using VuaDoCau.Models;
 
+namespace VuaDoCau.Data;
 
-namespace Vuadocau.Web.Data;
-
-
-public class VuadocauDbContext : DbContext
+public class VuaDoCauDbContext : DbContext
 {
-    public VuadocauDbContext(DbContextOptions<VuadocauDbContext> options) : base(options) { }
-
+    public VuaDoCauDbContext(DbContextOptions<VuaDoCauDbContext> options) : base(options) { }
 
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Product> Products => Set<Product>();
-
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

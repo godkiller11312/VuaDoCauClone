@@ -1,23 +1,29 @@
-﻿@model IEnumerable<Vuadocau.Web.Models.Product>
+﻿@model IEnumerable<VuaDoCau.Models.Product>
 @{
-	ViewData["Title"] = "Trang chủ";
+    ViewData["Title"] = "Trang chủ";
 }
 <h1 class="h4 mb-3">Sản phẩm mới</h1>
+
 <div class="row row-cols-1 row-cols-md-3 g-3">
-	@foreach (var p in Model)
-	{
-		<div class="col">
-			<div class="card h-100">
-				<img class="card-img-top" src="@p.ImageUrl" alt="@p.Name" />
-				<div class="card-body">
-					<h5 class="card-title">@p.Name</h5>
-					<p class="card-text small text-muted">@p.Summary</p>
-					<div class="fw-bold">@string.Format("{0:N0} đ", p.Price)</div>
-				</div>
-				<div class="card-footer bg-white">
-					<a class="btn btn-sm btn-outline-primary" asp-controller="Products" asp-action="Detail" asp-route-slug="@p.Slug">Xem chi tiết</a>
-				</div>
-			</div>
-		</div>
-	}
+    @foreach (var p in Model)
+    {
+        <div class="col">
+            <div class="card h-100">
+                <img class="card-img-top" src="@p.ImageUrl" alt="@p.Name" />
+                <div class="card-body">
+                    <h5 class="card-title">@p.Name</h5>
+                    <p class="card-text small text-muted">@p.Summary</p>
+                    <div class="fw-bold">@string.Format("{0:N0} đ", p.Price)</div>
+                </div>
+                <div class="card-footer bg-white d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-primary"
+                       asp-controller="Products" asp-action="Detail" asp-route-slug="@p.Slug">Xem chi tiết</a>
+                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@p.Id" />
+                        <button class="btn btn-sm btn-primary" type="submit">Thêm vào giỏ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
 </div>
