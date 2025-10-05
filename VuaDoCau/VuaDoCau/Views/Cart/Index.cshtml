@@ -134,7 +134,8 @@ else
                         <strong>@string.Format("{0:N0}VND", total)</strong>
                     </div>
 
-                    <a class="btn btn-success w-100 mt-3">THANH TOÁN</a>
+                    <a class="btn btn-success w-100 mt-3" asp-controller="Orders" asp-action="Checkout">THANH TOÁN</a>
+
                     <div class="text-muted small mt-2">* Đây chỉ là demo tính tổng. Phí ship có thể thay đổi khi chốt đơn.</div>
                 </div>
             </div>

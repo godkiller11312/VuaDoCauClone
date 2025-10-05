@@ -1,0 +1,64 @@
+﻿@model IEnumerable<VuaDoCau.Models.Order>
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+}
+
+<h2>Quản lý đơn hàng</h2>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Mã</th>
+            <th>Ngày</th>
+            <th>Trạng thái</th>
+            <th class="text-end">Tạm tính</th>
+            <th class="text-end">Phí ship</th>
+            <th class="text-end">Tổng</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model)
+        {
+            <tr>
+                <td>#@o.Id</td>
+                <td>@o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@o.Status</td>
+                <td class="text-end">@o.Subtotal.ToString("N0") đ</td>
+                <td class="text-end">@o.ShippingFee.ToString("N0") đ</td>
+                <td class="text-end">@o.Total.ToString("N0") đ</td>
+                <td class="text-end">
+                    @if (o.Status == "Chờ xác nhận")
+                    {
+                        <form asp-action="Confirm" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@o.Id" />
+                            <button class="btn btn-success btn-sm">Xác nhận</button>
+                        </form>
+                        <form asp-action="Cancel" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@o.Id" />
+                            <button class="btn btn-outline-danger btn-sm">Hủy</button>
+                        </form>
+                    }
+                    else if (o.Status == "Đang giao hàng")
+                    {
+                        <form asp-action="Done" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@o.Id" />
+                            <button class="btn btn-primary btn-sm">Hoàn tất</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+            <tr class="table-light">
+                <td colspan="7">
+                    @foreach (var it in o.Items)
+                    {
+                        <div class="d-flex justify-content-between small">
+                            <span>@it.Product.Name × @it.Quantity</span>
+                            <span>@(it.UnitPrice* it.Quantity).ToString("N0") đ</span>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -10,6 +10,10 @@ C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\VuaDoCau.pdb
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Azure.Identity.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Humanizer.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.UI.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.CodeAnalysis.CSharp.dll
@@ -21,7 +25,16 @@ C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.EntityFra
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Embedded.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Identity.Client.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
@@ -117,6 +130,7 @@ C:\Users\son\source\repos\VuaDoCau\VuaDoCau\obj\Debug\net8.0\VuaDoCau.GeneratedM
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\obj\Debug\net8.0\VuaDoCau.AssemblyInfoInputs.cache
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\obj\Debug\net8.0\VuaDoCau.AssemblyInfo.cs
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\obj\Debug\net8.0\VuaDoCau.csproj.CoreCompileInputs.cache
+C:\Users\son\source\repos\VuaDoCau\VuaDoCau\obj\Debug\net8.0\VuaDoCau.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\obj\Debug\net8.0\VuaDoCau.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\obj\Debug\net8.0\VuaDoCau.RazorAssemblyInfo.cache
 C:\Users\son\source\repos\VuaDoCau\VuaDoCau\obj\Debug\net8.0\VuaDoCau.RazorAssemblyInfo.cs
