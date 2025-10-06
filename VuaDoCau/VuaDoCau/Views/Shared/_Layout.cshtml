@@ -16,24 +16,25 @@
     <header class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
-                <img src="~/images/logo.png" alt="logo" height="30" class="me-2" />
-                VuaĐồCâu
+                <img src="~/images/logo.png" alt="logo" height="30" class="me-2" /> VuaĐồCâu
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="mainNav">
+                <!-- Left -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Tất cả sản phẩm</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                    </li>
 
-                    @* Dropdown Danh mục *@
+                    <!-- Danh mục -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="catDrop" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Danh mục
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="catDrop">
+                        <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
                             <li><a class="dropdown-item" asp-controller="Products" asp-action="Category" asp-route-id="1">Cần câu</a></li>
                             <li><a class="dropdown-item" asp-controller="Products" asp-action="Category" asp-route-id="2">Máy câu</a></li>
                             <li><a class="dropdown-item" asp-controller="Products" asp-action="Category" asp-route-id="3">Dây / Mồi / Phụ kiện</a></li>
@@ -41,27 +42,37 @@
                     </li>
 
                     <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
-                    @* ĐÃ BỎ mục Giới thiệu *@
                 </ul>
 
+                <!-- Right: ACCOUNT DROPDOWN -->
                 <div class="d-flex align-items-center">
                     @if (SignInMgr.IsSignedIn(User))
                     {
-                        <a asp-controller="Profile" asp-action="Index"
-                           class="btn btn-outline-light btn-sm me-2">Hồ sơ</a>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="adminMenu"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                @User.Identity!.Name
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="adminMenu">
+                                <li class="dropdown-header">Tài khoản</li>
+                                <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Hồ sơ</a></li>
 
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a asp-controller="ProductsAdmin" asp-action="Index"
-                               class="btn btn-warning btn-sm me-2">Quản lý sản phẩm</a>
-                            <a asp-controller="OrdersAdmin" asp-action="Index"
-                               class="btn btn-warning btn-sm me-2">Quản lý đơn</a>
-                        }
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li class="dropdown-header">Quản trị</li>
+                                    <li><a class="dropdown-item" asp-controller="ProductsAdmin" asp-action="Index">Quản lý sản phẩm</a></li>
+                                    <li><a class="dropdown-item" asp-controller="OrdersAdmin" asp-action="Index">Quản lý đơn</a></li>
+                                }
 
-                        <span class="text-white me-2"><strong>@User.Identity!.Name</strong></span>
-                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-outline-light btn-sm">Đăng xuất</button>
-                        </form>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <form class="px-3 m-0" asp-controller="Account" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item text-danger">Đăng xuất</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     }
                     else
                     {
@@ -73,24 +84,8 @@
         </div>
     </header>
 
-    <main role="main" class="container py-4">
-        @* Flash messages *@
-        @if (TempData["Success"] is string sMsg)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @sMsg
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        @if (TempData["Error"] is string eMsg)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                @eMsg
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-
-        <div class="bg-light p-4 rounded shadow-sm">
+    <main role="main">
+        <div class="container py-4">
             @RenderBody()
         </div>
     </main>
