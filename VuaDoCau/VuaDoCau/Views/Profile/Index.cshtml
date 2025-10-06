@@ -1,66 +1,99 @@
-﻿@using System.Globalization
-@model VuaDoCau.Models.ProfileViewModel
+﻿@using VuaDoCau.Models
+@model ProfileViewModel
+
 @{
     ViewData["Title"] = "Hồ sơ cá nhân";
-    var vi = new CultureInfo("vi-VN");
+    string FormatVND(decimal v) => $"{v:N0} đ";
+    bool CanCancel(string status)
+    {
+        var s = (status ?? "").Trim();
+        return s.Equals("Pending", System.StringComparison.OrdinalIgnoreCase)
+            || s.Equals("Chờ xác nhận", System.StringComparison.OrdinalIgnoreCase)
+            || s.Equals("Cho xac nhan", System.StringComparison.OrdinalIgnoreCase);
+    }
 }
 
-<h2 class="mb-4">Hồ sơ cá nhân</h2>
+<div class="container py-4">
+    <h2 class="mb-3">Hồ sơ cá nhân</h2>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <p><strong>Họ tên:</strong> @Model.FullName</p>
-                <p><strong>SĐT:</strong> @Model.Phone</p>
-            </div>
-            <div class="col-md-6">
-                <p><strong>Email:</strong> @Model.Email</p>
-                <p><strong>Địa chỉ:</strong> @Model.Address</p>
-            </div>
-        </div>
+    <div class="mb-4">
+        <div><strong>Họ tên:</strong> @Model.FullName</div>
+        <div><strong>Email:</strong> @Model.Email</div>
+        <div><strong>SDT:</strong> @Model.PhoneNumber</div>
+        <div><strong>Địa chỉ:</strong> @Model.Address</div>
     </div>
-</div>
 
-<h3 class="mb-3">Lịch sử đơn hàng</h3>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
 
-<table class="table table-hover align-middle">
-    <thead>
-        <tr>
-            <th style="width:140px">Mã đơn</th>
-            <th style="width:220px">Ngày</th>
-            <th>Trạng thái</th>
-            <th class="text-end" style="width:160px">Tổng</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Orders?.Any() == true)
-        {
-            foreach (var order in Model.Orders)
-            {
-                <tr class="table-active">
-                    <td>#@order.Id</td>
-                    <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@order.StatusText</td>
-                    <td class="text-end">@String.Format(vi, "{0:N0} đ", order.Total)</td>
+    <h3 class="mb-3">Lịch sử đơn hàng</h3>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 90px;">Mã đơn</th>
+                    <th style="width: 200px;">Ngày</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end" style="width: 160px;">Tổng</th>
+                    <th style="width: 160px;"></th>
                 </tr>
-
-                @if (order.Items?.Any() == true)
+            </thead>
+            <tbody>
+                @if (Model.Orders == null || !Model.Orders.Any())
                 {
-                    foreach (var it in order.Items)
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">Chưa có đơn hàng.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt))
                     {
-                        var lineTotal = it.UnitPrice * it.Quantity;
                         <tr>
-                            <td colspan="3" class="ps-4">@it.ProductName × @it.Quantity</td>
-                            <td class="text-end">@String.Format(vi, "{0:N0} đ", lineTotal)</td>
+                            <td><strong>#@order.Id</strong></td>
+                            <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@order.Status</td>
+                            <td class="text-end">@FormatVND(order.Total)</td>
+                            <td class="text-end">
+                                @if (CanCancel(order.Status))
+                                {
+                                    <form asp-action="Cancel" asp-controller="Profile" method="post" class="d-inline" onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn #@order.Id ?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@order.Id" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Hủy đơn</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+
+                        <tr class="table-borderless">
+                            <td></td>
+                            <td colspan="4" class="text-muted">
+                                @if (order.Items != null && order.Items.Any())
+                                {
+                                    <div>
+                                        @foreach (var it in order.Items)
+                                        {
+                                            <div><span>@it.ProductName × @it.Quantity</span></div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>(Không có dòng hàng)</span>
+                                }
+                            </td>
                         </tr>
                     }
                 }
-            }
-        }
-        else
-        {
-            <tr><td colspan="4" class="text-center text-muted">Chưa có đơn hàng.</td></tr>
-        }
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -5,13 +5,13 @@ namespace VuaDoCau.Models
 {
     public class ProfileViewModel
     {
-        // Thông tin tài khoản
-        public string FullName { get; set; } = "";
-        public string Email { get; set; } = "";
-        public string Phone { get; set; } = "";
-        public string Address { get; set; } = "";
+        // Thông tin user
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
 
-        // Đơn hàng
+        // Danh sách đơn
         public List<OrderVM> Orders { get; set; } = new();
     }
 
@@ -19,15 +19,15 @@ namespace VuaDoCau.Models
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string StatusText { get; set; } = "";
+        public string Status { get; set; } = string.Empty;
         public decimal Total { get; set; }
+
         public List<OrderItemVM> Items { get; set; } = new();
     }
 
     public class OrderItemVM
     {
-        public string ProductName { get; set; } = "";
         public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
+        public string ProductName { get; set; } = string.Empty;
     }
 }

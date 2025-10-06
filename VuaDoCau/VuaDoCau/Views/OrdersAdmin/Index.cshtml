@@ -1,64 +1,94 @@
-﻿@model IEnumerable<VuaDoCau.Models.Order>
+﻿@using VuaDoCau.Models
+@model IEnumerable<Order>
+
 @{
     ViewData["Title"] = "Quản lý đơn hàng";
+    string FormatVND(decimal v) => $"{v:N0} đ";
+    string StatusVi(string s)
+    {
+        return s switch
+        {
+            "Pending" => "Đang xử lý",
+            "Processing" => "Đang xử lý",
+            "Shipping" => "Đang giao hàng",
+            "Completed" => "Hoàn tất",
+            "Cancelled" => "Đã hủy",
+            _ => s ?? ""
+        };
+    }
 }
 
-<h2>Quản lý đơn hàng</h2>
+<div class="container py-4">
+    <h1 class="mb-4">Quản lý đơn hàng</h1>
 
-<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th>Mã</th>
-            <th>Ngày</th>
-            <th>Trạng thái</th>
-            <th class="text-end">Tạm tính</th>
-            <th class="text-end">Phí ship</th>
-            <th class="text-end">Tổng</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var o in Model)
-        {
-            <tr>
-                <td>#@o.Id</td>
-                <td>@o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@o.Status</td>
-                <td class="text-end">@o.Subtotal.ToString("N0") đ</td>
-                <td class="text-end">@o.ShippingFee.ToString("N0") đ</td>
-                <td class="text-end">@o.Total.ToString("N0") đ</td>
-                <td class="text-end">
-                    @if (o.Status == "Chờ xác nhận")
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 80px;">Mã</th>
+                    <th style="width: 200px;">Ngày</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end" style="width: 160px;">Tạm tính</th>
+                    <th class="text-end" style="width: 140px;">Phí ship</th>
+                    <th class="text-end" style="width: 160px;">Tổng</th>
+                    <th style="width: 140px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            Chưa có đơn hàng.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var order in Model.OrderByDescending(o => o.CreatedAt))
                     {
-                        <form asp-action="Confirm" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@o.Id" />
-                            <button class="btn btn-success btn-sm">Xác nhận</button>
-                        </form>
-                        <form asp-action="Cancel" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@o.Id" />
-                            <button class="btn btn-outline-danger btn-sm">Hủy</button>
-                        </form>
+                        <tr>
+                            <td><strong>#@order.Id</strong></td>
+                            <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@StatusVi(order.Status ?? "")</td>
+                            <td class="text-end">@FormatVND(order.Subtotal)</td>
+                            <td class="text-end">@FormatVND(order.ShippingFee)</td>
+                            <td class="text-end">@FormatVND(order.Total)</td>
+                            <td class="text-end">
+                                @if (!string.Equals(order.Status, "Completed", System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <form asp-action="MarkCompleted" asp-controller="OrdersAdmin" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@order.Id" />
+                                        <button type="submit" class="btn btn-primary btn-sm">Hoàn tất</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+
+                        <tr class="table-borderless">
+                            <td></td>
+                            <td colspan="6" class="text-muted">
+                                @if (order.Items != null && order.Items.Any())
+                                {
+                                    <div>
+                                        @foreach (var it in order.Items)
+                                        {
+                                            <div>
+                                                <span>@(it.Product?.Name) × @it.Quantity</span>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>(Không có dòng hàng)</span>
+                                }
+                            </td>
+                        </tr>
                     }
-                    else if (o.Status == "Đang giao hàng")
-                    {
-                        <form asp-action="Done" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@o.Id" />
-                            <button class="btn btn-primary btn-sm">Hoàn tất</button>
-                        </form>
-                    }
-                </td>
-            </tr>
-            <tr class="table-light">
-                <td colspan="7">
-                    @foreach (var it in o.Items)
-                    {
-                        <div class="d-flex justify-content-between small">
-                            <span>@it.Product.Name × @it.Quantity</span>
-                            <span>@(it.UnitPrice* it.Quantity).ToString("N0") đ</span>
-                        </div>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

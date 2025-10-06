@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VuaDoCau.Data;
+using VuaDoCau.Models;
 
 namespace VuaDoCau.Controllers
 {
@@ -9,54 +12,75 @@ namespace VuaDoCau.Controllers
     public class OrdersAdminController : Controller
     {
         private readonly VuaDoCauDbContext _db;
-        public OrdersAdminController(VuaDoCauDbContext db) => _db = db;
 
-        public async Task<IActionResult> Index()
+        public OrdersAdminController(VuaDoCauDbContext db)
         {
-            var orders = await _db.Orders
+            _db = db;
+        }
+
+        // GET: /OrdersAdmin
+        public IActionResult Index()
+        {
+            var orders = _db.Orders
                 .Include(o => o.Items)
-                .ThenInclude(i => i.Product)
+                    .ThenInclude(i => i.Product)
                 .OrderByDescending(o => o.CreatedAt)
-                .ToListAsync();
+                .AsNoTracking()
+                .ToList();
+
             return View(orders);
         }
 
+        // POST: /OrdersAdmin/MarkCompleted
         [HttpPost]
-        public async Task<IActionResult> Confirm(int id)
+        [ValidateAntiForgeryToken]
+        public IActionResult MarkCompleted(int id)
         {
-            var order = await _db.Orders.FindAsync(id);
-            if (order == null) return NotFound();
-            if (order.Status == "Chờ xác nhận")
+            var order = _db.Orders
+                .Include(o => o.Items)
+                .FirstOrDefault(o => o.Id == id);
+
+            if (order == null)
+                return NotFound();
+
+            if (!string.Equals(order.Status, "Completed", StringComparison.OrdinalIgnoreCase))
             {
-                order.Status = "Đang giao hàng";
-                await _db.SaveChangesAsync();
-                TempData["Success"] = $"Đơn #{id} đã chuyển sang trạng thái 'Đang giao hàng'.";
+                order.Status = "Completed";
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // (Tuỳ chọn) Chuyển sang đang giao
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult MarkShipping(int id)
+        {
+            var order = _db.Orders.FirstOrDefault(o => o.Id == id);
+            if (order == null) return NotFound();
+
+            if (!string.Equals(order.Status, "Completed", StringComparison.OrdinalIgnoreCase))
+            {
+                order.Status = "Shipping";
+                _db.SaveChanges();
             }
             return RedirectToAction(nameof(Index));
         }
 
+        // (Tuỳ chọn) Huỷ đơn
         [HttpPost]
-        public async Task<IActionResult> Done(int id)
+        [ValidateAntiForgeryToken]
+        public IActionResult Cancel(int id)
         {
-            var order = await _db.Orders.FindAsync(id);
+            var order = _db.Orders.FirstOrDefault(o => o.Id == id);
             if (order == null) return NotFound();
-            if (order.Status == "Đang giao hàng")
-            {
-                order.Status = "Hoàn tất";
-                await _db.SaveChangesAsync();
-                TempData["Success"] = $"Đơn #{id} đã hoàn tất.";
-            }
-            return RedirectToAction(nameof(Index));
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> Cancel(int id)
-        {
-            var order = await _db.Orders.FindAsync(id);
-            if (order == null) return NotFound();
-            order.Status = "Đã hủy";
-            await _db.SaveChangesAsync();
-            TempData["Success"] = $"Đơn #{id} đã bị hủy.";
+            if (!string.Equals(order.Status, "Completed", StringComparison.OrdinalIgnoreCase))
+            {
+                order.Status = "Cancelled";
+                _db.SaveChanges();
+            }
             return RedirectToAction(nameof(Index));
         }
     }
