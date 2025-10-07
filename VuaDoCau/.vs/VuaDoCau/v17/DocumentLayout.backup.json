@@ -226,8 +226,7 @@
               "RelativeToolTip": "VuaDoCau\\Views\\Profile\\Index.cshtml",
               "ViewState": "AgIAADkAAAAAAAAAAAAowEQAAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-05T09:16:41.561Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-05T09:16:41.561Z"
             },
             {
               "$type": "Document",
@@ -295,9 +294,9 @@
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Cart\\Index.cshtml",
               "RelativeDocumentMoniker": "VuaDoCau\\Views\\Cart\\Index.cshtml",
-              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Cart\\Index.cshtml*",
-              "RelativeToolTip": "VuaDoCau\\Views\\Cart\\Index.cshtml*",
-              "ViewState": "AgIAAHgAAAAAAAAAAAAmwIMAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Cart\\Index.cshtml",
+              "RelativeToolTip": "VuaDoCau\\Views\\Cart\\Index.cshtml",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAowIMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-10-02T09:55:18.458Z",
               "EditorCaption": ""

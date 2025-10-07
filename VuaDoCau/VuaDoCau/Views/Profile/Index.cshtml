@@ -4,13 +4,14 @@
 @{
     ViewData["Title"] = "Hồ sơ cá nhân";
     string FormatVND(decimal v) => $"{v:N0} đ";
-    bool CanCancel(string status)
+    bool IsPending(string s)
     {
-        var s = (status ?? "").Trim();
+        s = (s ?? "").Trim();
         return s.Equals("Pending", System.StringComparison.OrdinalIgnoreCase)
             || s.Equals("Chờ xác nhận", System.StringComparison.OrdinalIgnoreCase)
             || s.Equals("Cho xac nhan", System.StringComparison.OrdinalIgnoreCase);
     }
+    bool IsShipping(string s) => string.Equals((s ?? "").Trim(), "Shipping", System.StringComparison.OrdinalIgnoreCase);
 }
 
 <div class="container py-4">
@@ -23,6 +24,15 @@
         <div><strong>Địa chỉ:</strong> @Model.Address</div>
     </div>
 
+    @if (TempData["Success"] is string ok && !string.IsNullOrWhiteSpace(ok))
+    {
+        <div class="alert alert-success">@ok</div>
+    }
+    @if (TempData["Error"] is string er && !string.IsNullOrWhiteSpace(er))
+    {
+        <div class="alert alert-danger">@er</div>
+    }
+
     <h3 class="mb-3">Lịch sử đơn hàng</h3>
 
     <div class="table-responsive">
@@ -33,15 +43,13 @@
                     <th style="width: 200px;">Ngày</th>
                     <th>Trạng thái</th>
                     <th class="text-end" style="width: 160px;">Tổng</th>
-                    <th style="width: 160px;"></th>
+                    <th style="width: 240px;"></th>
                 </tr>
             </thead>
             <tbody>
                 @if (Model.Orders == null || !Model.Orders.Any())
                 {
-                    <tr>
-                        <td colspan="5" class="text-center text-muted py-5">Chưa có đơn hàng.</td>
-                    </tr>
+                    <tr><td colspan="5" class="text-center text-muted py-5">Chưa có đơn hàng.</td></tr>
                 }
                 else
                 {
@@ -53,12 +61,20 @@
                             <td>@order.Status</td>
                             <td class="text-end">@FormatVND(order.Total)</td>
                             <td class="text-end">
-                                @if (CanCancel(order.Status))
+                                @if (IsPending(order.Status))
                                 {
-                                    <form asp-action="Cancel" asp-controller="Profile" method="post" class="d-inline" onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn #@order.Id ?');">
+                                    <form asp-action="Cancel" asp-controller="Profile" method="post" class="d-inline" onsubmit="return confirm('Hủy đơn #@order.Id ?');">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@order.Id" />
                                         <button type="submit" class="btn btn-outline-danger btn-sm">Hủy đơn</button>
+                                    </form>
+                                }
+                                else if (IsShipping(order.Status))
+                                {
+                                    <form asp-action="ConfirmReceived" asp-controller="Profile" method="post" class="d-inline" onsubmit="return confirm('Xác nhận đã nhận đơn #@order.Id ?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@order.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm">Đã nhận hàng</button>
                                     </form>
                                 }
                             </td>
@@ -78,6 +94,7 @@
                                 }
                                 else
                                 {
+
                                     <span>(Không có dòng hàng)</span>
                                 }
                             </td>

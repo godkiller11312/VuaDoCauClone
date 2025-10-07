@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\son\\source\\repos\\VuaDoCau\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\profile\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\profile\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|solutionrelative:vuadocau\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6E742A45-05C9-48F5-91F2-FDFEEE55BEF4}|VuaDoCau\\VuaDoCau.csproj|c:\\users\\son\\source\\repos\\vuadocau\\vuadocau\\controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -202,7 +202,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
@@ -212,19 +212,20 @@
               "RelativeDocumentMoniker": "VuaDoCau\\Controllers\\ProfileController.cs",
               "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Controllers\\ProfileController.cs",
               "RelativeToolTip": "VuaDoCau\\Controllers\\ProfileController.cs",
-              "ViewState": "AgIAAFoAAAAAAAAAAAAswGsAAABIAAAAAAAAAA==",
+              "ViewState": "AgIAAG0AAAAAAAAAAADwv3oAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-05T09:15:48.453Z"
+              "WhenOpened": "2025-10-05T09:15:48.453Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Profile\\Index.cshtml",
               "RelativeDocumentMoniker": "VuaDoCau\\Views\\Profile\\Index.cshtml",
               "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Profile\\Index.cshtml",
               "RelativeToolTip": "VuaDoCau\\Views\\Profile\\Index.cshtml",
-              "ViewState": "AgIAADkAAAAAAAAAAAAowEQAAAA/AAAAAAAAAA==",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAIwGUAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-10-05T09:16:41.561Z",
               "EditorCaption": ""
@@ -235,11 +236,12 @@
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\OrdersAdmin\\Index.cshtml",
               "RelativeDocumentMoniker": "VuaDoCau\\Views\\OrdersAdmin\\Index.cshtml",
-              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\OrdersAdmin\\Index.cshtml",
-              "RelativeToolTip": "VuaDoCau\\Views\\OrdersAdmin\\Index.cshtml",
-              "ViewState": "AgIAAEMAAAAAAAAAAAAgwFUAAAAhAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\OrdersAdmin\\Index.cshtml*",
+              "RelativeToolTip": "VuaDoCau\\Views\\OrdersAdmin\\Index.cshtml*",
+              "ViewState": "AgIAADoAAAAAAAAAAAAIwE8AAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-10-05T09:27:29.357Z"
+              "WhenOpened": "2025-10-05T09:27:29.357Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -251,7 +253,8 @@
               "RelativeToolTip": "VuaDoCau\\Models\\ProfileViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-06T06:38:06.527Z"
+              "WhenOpened": "2025-10-06T06:38:06.527Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -285,19 +288,20 @@
               "RelativeDocumentMoniker": "VuaDoCau\\Controllers\\OrdersAdminController.cs",
               "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Controllers\\OrdersAdminController.cs",
               "RelativeToolTip": "VuaDoCau\\Controllers\\OrdersAdminController.cs",
-              "ViewState": "AgIAADwAAAAAAAAAAAAgwFcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADcAAAAAAAAAAADwv0YAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-05T09:25:34.331Z"
+              "WhenOpened": "2025-10-05T09:25:34.331Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Cart\\Index.cshtml",
               "RelativeDocumentMoniker": "VuaDoCau\\Views\\Cart\\Index.cshtml",
               "ToolTip": "C:\\Users\\son\\source\\repos\\VuaDoCau\\VuaDoCau\\Views\\Cart\\Index.cshtml",
               "RelativeToolTip": "VuaDoCau\\Views\\Cart\\Index.cshtml",
-              "ViewState": "AgIAAHgAAAAAAAAAAAAmwIMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAowIMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-10-02T09:55:18.458Z",
               "EditorCaption": ""

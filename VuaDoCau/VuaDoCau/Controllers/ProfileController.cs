@@ -22,25 +22,22 @@ namespace VuaDoCau.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Profile
         public IActionResult Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var user = _userManager.Users.AsNoTracking().FirstOrDefault(u => u.Id == userId);
             if (user == null) return Challenge();
 
             var orders = _db.Orders
                 .Where(o => o.UserId == userId)
-                .Include(o => o.Items)
-                    .ThenInclude(i => i.Product)
+                .Include(o => o.Items).ThenInclude(i => i.Product)
                 .OrderByDescending(o => o.CreatedAt)
                 .AsNoTracking()
                 .Select(o => new OrderVM
                 {
                     Id = o.Id,
                     CreatedAt = o.CreatedAt,
-                    Status = o.Status ?? string.Empty,
+                    Status = o.Status ?? "",
                     Total = o.Total,
                     Items = o.Items.Select(i => new OrderItemVM
                     {
@@ -62,37 +59,29 @@ namespace VuaDoCau.Controllers
             return View(vm);
         }
 
-        // POST: /Profile/Cancel  (User tự hủy đơn khi admin chưa xác nhận)
+        // User hủy đơn khi còn chờ xác nhận
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Cancel(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var order = _db.Orders
-                .Include(o => o.Items)
-                .FirstOrDefault(o => o.Id == id && o.UserId == userId);
+            var order = _db.Orders.Include(o => o.Items)
+                                  .FirstOrDefault(o => o.Id == id && o.UserId == userId);
+            if (order == null) return NotFound();
 
-            if (order == null)
-                return NotFound();
+            var s = (order.Status ?? "").Trim();
+            var isPending = s.Equals("Pending", StringComparison.OrdinalIgnoreCase)
+                         || s.Equals("Chờ xác nhận", StringComparison.OrdinalIgnoreCase)
+                         || s.Equals("Cho xac nhan", StringComparison.OrdinalIgnoreCase);
 
-            // Chỉ cho hủy khi chưa xác nhận (Pending/Chờ xác nhận)
-            var status = (order.Status ?? string.Empty).Trim();
-            var canCancel =
-                status.Equals("Pending", StringComparison.OrdinalIgnoreCase) ||
-                status.Equals("Chờ xác nhận", StringComparison.OrdinalIgnoreCase) ||
-                status.Equals("Cho xac nhan", StringComparison.OrdinalIgnoreCase);
-
-            if (!canCancel)
+            if (!isPending)
             {
                 TempData["Error"] = "Đơn đã được xác nhận/xử lý, không thể hủy.";
                 return RedirectToAction(nameof(Index));
             }
 
-            // Xóa đơn + dòng hàng (an toàn cả khi bật cascade)
-            if (order.Items != null && order.Items.Count > 0)
-                _db.OrderItems.RemoveRange(order.Items);
-
+            if (order.Items?.Count > 0) _db.OrderItems.RemoveRange(order.Items);
             _db.Orders.Remove(order);
             _db.SaveChanges();
 
@@ -100,7 +89,28 @@ namespace VuaDoCau.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // (Tuỳ chọn) Cập nhật hồ sơ cơ bản
+        // User xác nhận đã nhận hàng → Completed
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ConfirmReceived(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var order = _db.Orders.FirstOrDefault(o => o.Id == id && o.UserId == userId);
+            if (order == null) return NotFound();
+
+            var s = (order.Status ?? "").Trim();
+            if (s.Equals("Shipping", StringComparison.OrdinalIgnoreCase))
+            {
+                order.Status = "Completed";
+                _db.SaveChanges();
+                TempData["Success"] = $"Đơn #{order.Id} đã hoàn tất.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // (tuỳ chọn) cập nhật hồ sơ cơ bản
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateProfile(ProfileViewModel input)

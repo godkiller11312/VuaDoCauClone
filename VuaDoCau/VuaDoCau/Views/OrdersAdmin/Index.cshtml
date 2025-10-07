@@ -4,17 +4,12 @@
 @{
     ViewData["Title"] = "Quản lý đơn hàng";
     string FormatVND(decimal v) => $"{v:N0} đ";
-    string StatusVi(string s)
+    bool IsPending(string s)
     {
-        return s switch
-        {
-            "Pending" => "Đang xử lý",
-            "Processing" => "Đang xử lý",
-            "Shipping" => "Đang giao hàng",
-            "Completed" => "Hoàn tất",
-            "Cancelled" => "Đã hủy",
-            _ => s ?? ""
-        };
+        s = (s ?? "").Trim();
+        return s.Equals("Pending", System.StringComparison.OrdinalIgnoreCase)
+            || s.Equals("Chờ xác nhận", System.StringComparison.OrdinalIgnoreCase)
+            || s.Equals("Cho xac nhan", System.StringComparison.OrdinalIgnoreCase);
     }
 }
 
@@ -31,62 +26,58 @@
                     <th class="text-end" style="width: 160px;">Tạm tính</th>
                     <th class="text-end" style="width: 140px;">Phí ship</th>
                     <th class="text-end" style="width: 160px;">Tổng</th>
-                    <th style="width: 140px;"></th>
+                    <th style="width: 220px;"></th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model == null || !Model.Any())
+                @foreach (var order in Model.OrderByDescending(o => o.CreatedAt))
                 {
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-5">
-                            Chưa có đơn hàng.
+                        <td><strong>#@order.Id</strong></td>
+                        <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@(order.Status ?? "")</td>
+                        <td class="text-end">@FormatVND(order.Subtotal)</td>
+                        <td class="text-end">@FormatVND(order.ShippingFee)</td>
+                        <td class="text-end">@FormatVND(order.Total)</td>
+                        <td class="text-end">
+                            @if (IsPending(order.Status))
+                            {
+                                <form asp-action="MarkShipping" asp-controller="OrdersAdmin" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Xác nhận giao</button>
+                                </form>
+                            }
+                            else if (string.Equals(order.Status, "Shipping", System.StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="badge bg-info text-dark">Đang giao</span>
+                            }
+                            else if (string.Equals(order.Status, "Completed", System.StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="badge bg-success">Hoàn tất</span>
+                            }
                         </td>
                     </tr>
-                }
-                else
-                {
-                    foreach (var order in Model.OrderByDescending(o => o.CreatedAt))
-                    {
-                        <tr>
-                            <td><strong>#@order.Id</strong></td>
-                            <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@StatusVi(order.Status ?? "")</td>
-                            <td class="text-end">@FormatVND(order.Subtotal)</td>
-                            <td class="text-end">@FormatVND(order.ShippingFee)</td>
-                            <td class="text-end">@FormatVND(order.Total)</td>
-                            <td class="text-end">
-                                @if (!string.Equals(order.Status, "Completed", System.StringComparison.OrdinalIgnoreCase))
-                                {
-                                    <form asp-action="MarkCompleted" asp-controller="OrdersAdmin" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@order.Id" />
-                                        <button type="submit" class="btn btn-primary btn-sm">Hoàn tất</button>
-                                    </form>
-                                }
-                            </td>
-                        </tr>
 
-                        <tr class="table-borderless">
-                            <td></td>
-                            <td colspan="6" class="text-muted">
-                                @if (order.Items != null && order.Items.Any())
-                                {
-                                    <div>
-                                        @foreach (var it in order.Items)
-                                        {
-                                            <div>
-                                                <span>@(it.Product?.Name) × @it.Quantity</span>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span>(Không có dòng hàng)</span>
-                                }
-                            </td>
-                        </tr>
-                    }
+                    <tr class="table-borderless">
+                        <td></td>
+                        <td colspan="6" class="text-muted">
+                            @if (order.Items != null && order.Items.Any())
+                            {
+                                <div>
+                                    @foreach (var it in order.Items)
+                                    {
+                                        <div><span>@(it.Product?.Name) × @it.Quantity</span></div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+
+                                <span>(Không có dòng hàng)</span>
+                            }
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>

@@ -22,8 +22,7 @@ namespace VuaDoCau.Controllers
         public IActionResult Index()
         {
             var orders = _db.Orders
-                .Include(o => o.Items)
-                    .ThenInclude(i => i.Product)
+                .Include(o => o.Items).ThenInclude(i => i.Product)
                 .OrderByDescending(o => o.CreatedAt)
                 .AsNoTracking()
                 .ToList();
@@ -31,28 +30,7 @@ namespace VuaDoCau.Controllers
             return View(orders);
         }
 
-        // POST: /OrdersAdmin/MarkCompleted
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult MarkCompleted(int id)
-        {
-            var order = _db.Orders
-                .Include(o => o.Items)
-                .FirstOrDefault(o => o.Id == id);
-
-            if (order == null)
-                return NotFound();
-
-            if (!string.Equals(order.Status, "Completed", StringComparison.OrdinalIgnoreCase))
-            {
-                order.Status = "Completed";
-                _db.SaveChanges();
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        // (Tuỳ chọn) Chuyển sang đang giao
+        // POST: /OrdersAdmin/MarkShipping  (Admin xác nhận giao)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult MarkShipping(int id)
@@ -60,27 +38,39 @@ namespace VuaDoCau.Controllers
             var order = _db.Orders.FirstOrDefault(o => o.Id == id);
             if (order == null) return NotFound();
 
-            if (!string.Equals(order.Status, "Completed", StringComparison.OrdinalIgnoreCase))
+            // Chỉ cho chuyển từ trạng thái chờ xác nhận → đang giao
+            var s = (order.Status ?? "").Trim();
+            var isPending = s.Equals("Pending", StringComparison.OrdinalIgnoreCase)
+                         || s.Equals("Chờ xác nhận", StringComparison.OrdinalIgnoreCase)
+                         || s.Equals("Cho xac nhan", StringComparison.OrdinalIgnoreCase);
+
+            if (isPending)
             {
-                order.Status = "Shipping";
+                order.Status = "Shipping"; // Đang giao hàng
                 _db.SaveChanges();
             }
+
             return RedirectToAction(nameof(Index));
         }
 
-        // (Tuỳ chọn) Huỷ đơn
+        // (tùy chọn) Hủy đơn (trước khi giao)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Cancel(int id)
         {
-            var order = _db.Orders.FirstOrDefault(o => o.Id == id);
+            var order = _db.Orders.Include(o => o.Items).FirstOrDefault(o => o.Id == id);
             if (order == null) return NotFound();
 
-            if (!string.Equals(order.Status, "Completed", StringComparison.OrdinalIgnoreCase))
+            var s = (order.Status ?? "").Trim();
+            var canCancel = !s.Equals("Completed", StringComparison.OrdinalIgnoreCase)
+                            && !s.Equals("Shipping", StringComparison.OrdinalIgnoreCase);
+            if (canCancel)
             {
-                order.Status = "Cancelled";
+                if (order.Items?.Count > 0) _db.OrderItems.RemoveRange(order.Items);
+                _db.Orders.Remove(order);
                 _db.SaveChanges();
             }
+
             return RedirectToAction(nameof(Index));
         }
     }
