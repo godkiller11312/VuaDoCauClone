@@ -23,15 +23,6 @@
         <div><strong>Địa chỉ:</strong> @Model.Address</div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
-
     <h3 class="mb-3">Lịch sử đơn hàng</h3>
 
     <div class="table-responsive">
