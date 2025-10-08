@@ -1,30 +1,33 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+using System.Linq;
 using VuaDoCau.Data;
 using VuaDoCau.Models;
+using System.Collections.Generic;
 
-namespace VuaDoCau.Controllers;
-
-public class HomeController : Controller
+namespace VuaDoCau.Controllers
 {
-    private readonly VuaDoCauDbContext _db;
-    public HomeController(VuaDoCauDbContext db) => _db = db;
-
-    public async Task<IActionResult> Index(string? q)
+    public class HomeController : Controller
     {
-        var query = _db.Products.Include(p => p.Category)
-                                .OrderByDescending(p => p.Id)
-                                .AsQueryable();
+        private readonly VuaDoCauDbContext _db;
+        public HomeController(VuaDoCauDbContext db) => _db = db;
 
-        if (!string.IsNullOrWhiteSpace(q))
-            query = query.Where(p => p.Name.Contains(q) || (p.Summary ?? "").Contains(q));
+        public IActionResult Index()
+        {
+            // Lấy 4 danh mục có nhiều sản phẩm nhất + kèm luôn Products
+            var cats = _db.Categories
+                .Include(c => c.Products)
+                .AsNoTracking()
+                .OrderByDescending(c => c.Products.Count)
+                .Take(4)
+                .ToList();
 
-        var products = await query.Take(12).ToListAsync();
-        ViewBag.Query = q;
-        return View(products);
+            return View(cats); // Model: IEnumerable<Category>
+        }
+
+        public IActionResult Privacy() => View();
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error() => View();
     }
-
-    public IActionResult Error()
-        => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 }
