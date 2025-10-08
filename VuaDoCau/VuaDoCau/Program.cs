@@ -12,7 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<VuaDoCauDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
-// Identity (.NET 8)
+// Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
 {
     opt.Password.RequireNonAlphanumeric = false;
@@ -30,12 +30,16 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 // Session + Cart
 builder.Services.AddHttpContextAccessor();
+// >>> Thêm dòng này để session có backing store:
+builder.Services.AddDistributedMemoryCache();
+
 builder.Services.AddSession(o =>
 {
     o.IdleTimeout = TimeSpan.FromHours(2);
     o.Cookie.HttpOnly = true;
     o.Cookie.IsEssential = true;
 });
+
 builder.Services.AddScoped<CartService>();
 
 var app = builder.Build();
@@ -48,8 +52,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
+// Session phải nằm sau UseRouting và trước Auth/Endpoints
 app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -64,9 +72,7 @@ using (var scope = app.Services.CreateScope())
     var db = sv.GetRequiredService<VuaDoCauDbContext>();
     db.Database.Migrate();
     DbInitializer.Seed(db);
-    await SeedIdentityAsync(sv); // nếu bạn đang dùng seed cũ
-
-   
+    await SeedIdentityAsync(sv);
 }
 
 app.Run();

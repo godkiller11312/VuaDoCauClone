@@ -1,105 +1,99 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Dynamic;
+using System.Text.Json;
 using VuaDoCau.Data;
-using VuaDoCau.Models;
-using VuaDoCau.Services;
 
 namespace VuaDoCau.Controllers
 {
-    [Authorize]
     public class OrdersController : Controller
     {
+        private const string CART_KEY = "CART";
         private readonly VuaDoCauDbContext _db;
-        private readonly CartService _cart;
 
-        public OrdersController(VuaDoCauDbContext db, CartService cart)
-        { _db = db; _cart = cart; }
+        public OrdersController(VuaDoCauDbContext db) => _db = db;
 
-        [HttpGet]
-        public async Task<IActionResult> Checkout()
+        private class Line { public int ProductId { get; set; } public int Quantity { get; set; } }
+
+        private List<Line> GetCartRaw()
         {
-            var user = await _db.Users.OfType<ApplicationUser>()
-                .FirstAsync(u => u.UserName == User.Identity!.Name);
-
-            var vm = new CheckoutVm
-            {
-                ReceiverName = user.FullName ?? "",
-                Phone = user.PhoneNumber ?? "",
-                Email = user.Email ?? "",
-                Address = user.Address ?? "",
-                Items = _cart.Get()
-            };
-            vm.Subtotal = vm.Items.Sum(i => i.LineTotal);
-            vm.Shipping = vm.Items.Any() ? 25000m : 0m;
-            return View(vm);
+            var json = HttpContext.Session.GetString(CART_KEY);
+            if (string.IsNullOrEmpty(json)) return new List<Line>();
+            try { return JsonSerializer.Deserialize<List<Line>>(json) ?? new List<Line>(); }
+            catch { return new List<Line>(); }
         }
+
+        private List<dynamic> BuildItems()
+        {
+            var lines = GetCartRaw();
+            var ids = lines.Select(l => l.ProductId).Distinct().ToList();
+            var prods = _db.Products.Where(p => ids.Contains(p.Id)).ToDictionary(p => p.Id);
+
+            var items = new List<dynamic>();
+            foreach (var l in lines)
+            {
+                if (!prods.TryGetValue(l.ProductId, out var p)) continue;
+                dynamic it = new ExpandoObject();
+                it.ProductId = p.Id;
+                it.Name = p.Name;
+                it.ImageUrl = string.IsNullOrWhiteSpace(p.ImageUrl) ? "/images/no-image.png" : p.ImageUrl;
+                it.UnitPrice = p.Price;
+                it.Quantity = l.Quantity;
+                it.Subtotal = p.Price * l.Quantity;
+                items.Add(it);
+            }
+            return items;
+        }
+
+        private void FillTotalsToViewBag()
+        {
+            var items = BuildItems();
+            decimal subtotal = 0m; foreach (dynamic it in items) subtotal += (decimal)it.Subtotal;
+            decimal shipping = items.Any() ? 25000m : 0m;
+            ViewBag.Items = items;
+            ViewBag.Subtotal = subtotal;
+            ViewBag.Shipping = shipping;
+            ViewBag.Total = subtotal + shipping;
+        }
+
+        // ----- /Orders/Create  (GET)
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var items = BuildItems();
+            if (!items.Any())
+            {
+                TempData["CartMessage"] = "Giỏ hàng trống, không thể thanh toán.";
+                return RedirectToAction("Index", "Cart");
+            }
+            FillTotalsToViewBag();
+            return View(); // Views/Orders/Create.cshtml
+        }
+
+        // ----- /Orders/Create  (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(string? fullName, string? phone, string? email, string? address, string? note)
+        {
+            var items = BuildItems();
+            if (!items.Any())
+            {
+                TempData["CartMessage"] = "Giỏ hàng trống, không thể thanh toán.";
+                return RedirectToAction("Index", "Cart");
+            }
+
+            // TODO: Map items -> Order/OrderItem của dự án nếu muốn lưu DB.
+            HttpContext.Session.Remove(CART_KEY);
+            TempData["CartMessage"] = "Đặt hàng thành công! Admin sẽ xác nhận giao hàng.";
+            return RedirectToAction("Index", "Cart");
+        }
+
+        // ----- Alias để ai trỏ /Orders/Checkout vẫn dùng được
+        [HttpGet]
+        public IActionResult Checkout() => Create();
 
         [HttpPost]
-        public async Task<IActionResult> Checkout(CheckoutVm vm)
-        {
-            vm.Items = _cart.Get();
-            vm.Subtotal = vm.Items.Sum(i => i.LineTotal);
-            vm.Shipping = vm.Items.Any() ? 25000m : 0m;
-            if (!vm.Items.Any())
-            {
-                ModelState.AddModelError("", "Giỏ hàng trống.");
-                return View(vm);
-            }
-
-            var user = await _db.Users.OfType<ApplicationUser>()
-                .FirstAsync(u => u.UserName == User.Identity!.Name);
-
-            var order = new Order
-            {
-                UserId = user.Id,
-                ReceiverName = vm.ReceiverName,
-                Phone = vm.Phone,
-                Email = vm.Email,
-                Address = vm.Address,
-                Note = vm.Note,
-                Subtotal = vm.Subtotal,
-                ShippingFee = vm.Shipping,
-                Status = "Chờ xác nhận"   // <<< MẶC ĐỊNH
-            };
-
-            foreach (var it in vm.Items)
-            {
-                order.Items.Add(new OrderItem
-                {
-                    ProductId = it.ProductId,
-                    Quantity = it.Quantity,
-                    UnitPrice = it.Price
-                });
-            }
-
-            _db.Orders.Add(order);
-            await _db.SaveChangesAsync();
-            _cart.Clear();
-
-            return RedirectToAction(nameof(Success), new { id = order.Id });
-        }
-
-        public async Task<IActionResult> Success(int id)
-        {
-            var o = await _db.Orders.Include(x => x.Items).ThenInclude(i => i.Product)
-                .FirstOrDefaultAsync(x => x.Id == id);
-            if (o == null) return NotFound();
-            return View(o);
-        }
-    }
-
-    public class CheckoutVm
-    {
-        public string ReceiverName { get; set; } = "";
-        public string Phone { get; set; } = "";
-        public string Email { get; set; } = "";
-        public string Address { get; set; } = "";
-        public string? Note { get; set; }
-
-        public List<CartItem> Items { get; set; } = new();
-        public decimal Subtotal { get; set; }
-        public decimal Shipping { get; set; }
-        public decimal Total => Subtotal + Shipping;
+        [ValidateAntiForgeryToken]
+        public IActionResult Checkout(string? fullName, string? phone, string? email, string? address, string? note)
+            => Create(fullName, phone, email, address, note);
     }
 }

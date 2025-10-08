@@ -7,30 +7,23 @@ namespace VuaDoCau.Models
     {
         public int Id { get; set; }
 
-        [Required, MaxLength(80)]
-        public string Name { get; set; } = string.Empty;
-
-        [MaxLength(40)]
+        // (tùy dự án của Chu đã có/không) – giữ nguyên các thuộc tính sẵn có
         public string? Sku { get; set; }
-
-        [MaxLength(120)]
+        [Required, MaxLength(255)]
+        public string Name { get; set; } = string.Empty;
         public string? Slug { get; set; }
 
-        [MaxLength(200)]
+        // >>> Thêm duy nhất dòng này để hiển thị mô tả ngắn:
         public string? Summary { get; set; }
 
-        [Range(0, 1_000_000_000)]
+        public string? ImageUrl { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
-
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? OldPrice { get; set; }
 
-        // 🔴 KHÔNG đánh [Required] cho navigation
+        // FK
         public int CategoryId { get; set; }
-
-        [ForeignKey(nameof(CategoryId))]
-        public Category? Category { get; set; }   // cho phép null ở đây
-
-        [MaxLength(300)]
-        public string? ImageUrl { get; set; }
+        public Category? Category { get; set; }
     }
 }

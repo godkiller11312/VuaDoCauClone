@@ -1,7 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @using VuaDoCau.Models
+@using VuaDoCau.Data
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject VuaDoCauDbContext Db
+@* Dùng Db để render danh mục *@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -30,15 +34,46 @@
                 <div class="collapse navbar-collapse" id="mainNav">
                     <!-- Left: menu -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                        </li>
+
+                        <!-- Danh mục từ DB -->
+                        @{
+                            var cats = Db.Categories
+                            .AsNoTracking()
+                            .OrderBy(c => c.Name)
+                            .ToList();
+                        }
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="catDrop" role="button" data-bs-toggle="dropdown" aria-expanded="false">Danh mục</a>
+                            <a class="nav-link dropdown-toggle" href="#" id="catDrop" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Danh mục
+                            </a>
                             <ul class="dropdown-menu" aria-labelledby="catDrop">
-                                <li><a class="dropdown-item" asp-controller="Products" asp-action="Index" asp-route-categoryId="">Tất cả sản phẩm</a></li>
-                                <!-- Nếu muốn đổ danh mục động, render ở đây -->
+                                @if (cats != null && cats.Count > 0)
+                                {
+                                    foreach (var c in cats)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="Products"
+                                               asp-action="Index"
+                                               asp-route-categoryId="@c.Id">
+                                                @c.Name
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li><span class="dropdown-item text-muted">Chưa có danh mục</span></li>
+                                }
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Cart" asp-action="Index">Giỏ hàng</a>
+                        </li>
                     </ul>
 
                     <!-- Center: Search -->
@@ -89,9 +124,48 @@
         </main>
     </div>
 
-    <footer class="text-center">
-        <div class="container">
-            <span>© @DateTime.Now.Year - Vua Đồ Câu | <a asp-controller="Home" asp-action="Privacy">Liên hệ</a></span>
+    <footer class="site-footer mt-auto">
+        <div class="footer-top">
+            <div class="container">
+                <div class="row gy-4">
+                    <div class="col-12 col-md-6 col-lg-5">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <img src="~/images/logo.png" alt="Vua Đồ Câu" class="site-logo" />
+                            <h5 class="m-0 fw-bold">VuaĐồCâu</h5>
+                        </div>
+                        <p class="mb-2 text-muted">
+                            Shop đồ câu & phụ kiện – chọn lọc, giá tốt, giao nhanh. Trải nghiệm mua sắm mát lành như một buổi câu.
+                        </p>
+                        <ul class="list-unstyled small text-muted mb-0">
+                            <li>📧 <a href="mailto:thson1602@gmail.com">thson1602@gmail.com</a></li>
+                            <li>📞 <a href="tel:0886214922">0886&nbsp;214&nbsp;922</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-6 col-md-3 col-lg-3">
+                        <h6 class="fw-bold mb-2">Liên kết nhanh</h6>
+                        <ul class="list-unstyled small">
+                            <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                            <li><a asp-controller="Products" asp-action="Index">Sản phẩm</a></li>
+                            <li><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                            <li><a asp-controller="Home" asp-action="Privacy">Liên hệ</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-6 col-md-3 col-lg-4">
+                        <h6 class="fw-bold mb-2">Nhận ưu đãi</h6>
+                        <form class="footer-news d-flex gap-2" onsubmit="alert('Đăng ký nhận tin thành công!'); return false;">
+                            <input type="email" class="form-control" placeholder="Email của bạn" required />
+                            <button class="btn btn-primary" type="submit">Đăng ký</button>
+                        </form>
+                        <p class="small text-muted mt-2 mb-0">Chỉ gửi tin hữu ích. Có thể hủy bất cứ lúc nào.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bar">
+            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                <span class="small text-muted">© @DateTime.Now.Year Vua Đồ Câu</span>
+                <span class="small"><a asp-controller="Home" asp-action="Privacy">Điều khoản & Chính sách</a></span>
+            </div>
         </div>
     </footer>
 

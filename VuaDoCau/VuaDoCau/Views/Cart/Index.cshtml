@@ -1,131 +1,94 @@
-﻿@using VuaDoCau.Models
-@model IEnumerable<CartItem>
-
+﻿@model VuaDoCau.Controllers.CartController.CartVM
 @{
     ViewData["Title"] = "Giỏ hàng";
-
-    // Đọc giá theo tên thuộc tính hiện có trong CartItem.
-    // Mặc định dùng Price; nếu null thì 0.
-    decimal UnitPriceOf(CartItem x)
-        => x == null ? 0m : (decimal)(x.GetType().GetProperty("Price")?.GetValue(x) ?? 0m);
-
-    // Đọc tên sản phẩm theo thuộc tính Name (mặc định); nếu null thì "(Sản phẩm)".
-    string NameOf(CartItem x)
-        => x == null ? "(Sản phẩm)" : (string)(x.GetType().GetProperty("Name")?.GetValue(x) ?? "(Sản phẩm)");
-
-    string FormatVND(decimal v) => $"{v:N0}VND";
+    string VND(decimal v) => $"{v:N0} đ";
 }
 
-<style>
-    /* Rộng, rõ ràng cho input số lượng */
-    .qty-input {
-        width: 110px;
-        max-width: 140px;
-        min-width: 90px;
-        text-align: center;
-        font-weight: 600;
-        letter-spacing: .3px;
-    }
-    /* Hiển thị spinner rõ ràng trên Chrome/Edge */
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
-        opacity: 1;
-        height: auto;
-    }
-
-    .cart-actions .btn {
-        min-width: 90px;
-    }
-</style>
-
 <div class="container py-4">
-    <h1 class="mb-4">Giỏ hàng</h1>
+    <h1 class="mb-3">Giỏ hàng</h1>
 
-    @if (Model == null || !Model.Any())
+    @if (TempData["CartMessage"] is string msg)
+    {
+        <div class="alert alert-success">@msg</div>
+    }
+
+    @if (Model.Items == null || !Model.Items.Any())
     {
         <div class="alert alert-info">Giỏ hàng của bạn đang trống.</div>
         <a asp-controller="Products" asp-action="Index" class="btn btn-primary">Tiếp tục mua sắm</a>
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead class="table-light">
+        <div class="table-responsive mb-3">
+            <table class="table table-hover align-middle">
+                <thead>
                     <tr>
+                        <th style="width:80px;"></th>
                         <th>Sản phẩm</th>
                         <th class="text-end">Giá</th>
-                        <th class="text-center">Số lượng</th>
-                        <th class="text-end">Tổng giá</th>
-                        <th class="text-center" style="width: 60px;"></th>
+                        <th class="text-center" style="width:160px;">Số lượng</th>
+                        <th class="text-end">Tạm tính</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var it in Model.Items)
                     {
-                        var unit = UnitPriceOf(item);
-                        var lineTotal = unit * item.Quantity;
                         <tr>
                             <td>
-                                <div class="fw-semibold">@NameOf(item)</div>
+                                <img src="@it.ImageUrl" alt="@it.Name" style="width:64px;height:64px;object-fit:cover;border-radius:8px;background:#f3f4f6;" />
                             </td>
-                            <td class="text-end">@FormatVND(unit)</td>
+                            <td class="fw-semibold">@it.Name</td>
+                            <td class="text-end">@VND(it.UnitPrice)</td>
                             <td class="text-center">
-                                <form asp-controller="Cart" asp-action="Update" method="post" class="d-inline-flex gap-2 cart-actions">
+                                <form asp-controller="Cart" asp-action="Update" method="post" class="d-inline-flex align-items-center gap-2">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="productId" value="@item.ProductId" />
-                                    <input type="number"
-                                           class="form-control qty-input"
-                                           name="quantity"
-                                           value="@item.Quantity"
-                                           min="1" step="1" />
-                                    <button type="submit" class="btn btn-outline-secondary">Áp dụng</button>
+                                    <input type="hidden" name="productId" value="@it.ProductId" />
+                                    <input type="number" name="quantity" value="@it.Quantity" min="1" class="form-control qty-input" />
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Áp dụng</button>
                                 </form>
                             </td>
-                            <td class="text-end fw-semibold">@FormatVND(lineTotal)</td>
-                            <td class="text-center">
-                                <form asp-controller="Cart" asp-action="Remove" method="post" class="d-inline" onsubmit="return confirm('Xóa @NameOf(item) khỏi giỏ?');">
+                            <td class="text-end fw-bold">@VND(it.Subtotal)</td>
+                            <td class="text-end">
+                                <form asp-controller="Cart" asp-action="Remove" method="post" onsubmit="return confirm('Xóa sản phẩm này?');">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="productId" value="@item.ProductId" />
-                                    <button type="submit" class="btn btn-link text-danger p-0" title="Xóa">
-                                        <span aria-hidden="true">✕</span>
-                                    </button>
+                                    <input type="hidden" name="productId" value="@it.ProductId" />
+                                    <button class="btn btn-link text-danger">✕</button>
                                 </form>
                             </td>
                         </tr>
                     }
                 </tbody>
-                <tfoot>
-                    @{
-                        var sub = Model.Sum(x => UnitPriceOf(x) * x.Quantity);
-                        var ship = 0m; // chỉnh nếu có ship
-                        var total = sub + ship;
-                    }
+                <tfoot class="table-light">
                     <tr>
-                        <th colspan="3" class="text-end">Tạm tính</th>
-                        <th class="text-end">@FormatVND(sub)</th>
+                        <th colspan="4" class="text-end">Tạm tính</th>
+                        <th class="text-end">@VND(Model.Subtotal)</th>
                         <th></th>
                     </tr>
                     <tr>
-                        <th colspan="3" class="text-end">Phí ship</th>
-                        <th class="text-end">@FormatVND(ship)</th>
+                        <th colspan="4" class="text-end">Phí ship</th>
+                        <th class="text-end">@VND(Model.Shipping)</th>
                         <th></th>
                     </tr>
-                    <tr class="table-light">
-                        <th colspan="3" class="text-end fs-5">Tổng cộng</th>
-                        <th class="text-end fs-5">@FormatVND(total)</th>
+                    <tr>
+                        <th colspan="4" class="text-end fs-5">Tổng cộng</th>
+                        <th class="text-end fs-5">@VND(Model.Total)</th>
                         <th></th>
                     </tr>
                 </tfoot>
             </table>
         </div>
 
-        <div class="d-flex gap-2 justify-content-end">
+        <div class="d-flex gap-2 justify-content-between">
             <form asp-controller="Cart" asp-action="Clear" method="post" onsubmit="return confirm('Xóa toàn bộ giỏ hàng?');">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-outline-danger">Xóa giỏ hàng</button>
+                <button class="btn btn-outline-danger">Xóa toàn bộ</button>
             </form>
-            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary">Tiếp tục mua sắm</a>
-            <a asp-controller="Orders" asp-action="Checkout" class="btn btn-primary">Thanh toán</a>
+
+            <div class="d-flex gap-2">
+                <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary">Tiếp tục mua sắm</a>
+                <a asp-controller="Orders" asp-action="Create" class="btn btn-primary">Thanh toán</a>
+            </div>
         </div>
     }
 </div>
