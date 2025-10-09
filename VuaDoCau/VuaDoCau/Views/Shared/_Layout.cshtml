@@ -1,28 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Microsoft.EntityFrameworkCore
-@using VuaDoCau.Models
-@using VuaDoCau.Data
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
-@inject VuaDoCauDbContext Db
-@* Dùng Db để render danh mục *@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Vua Đồ Câu</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-</head>
-<body>
-    <header class="border-bottom">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - VuaĐồCâu</title>
 
-                <!-- Brand -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- HEADER -->
+    <header class="border-bottom bg-white position-sticky top-0" style="z-index:1030;">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
                 <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/logo.png" alt="Vua Đồ Câu" class="site-logo" />
+                    <img src="~/images/logo.png" alt="logo" width="36" height="36" class="rounded-circle" />
                     <span class="fw-bold">VuaĐồCâu</span>
                 </a>
 
@@ -32,144 +26,121 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="mainNav">
-                    <!-- Left: menu -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
 
-                        <!-- Danh mục từ DB -->
-                        @{
-                            var cats = Db.Categories
-                            .AsNoTracking()
-                            .OrderBy(c => c.Name)
-                            .ToList();
-                        }
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="catDrop" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Danh mục
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="catDrop">
-                                @if (cats != null && cats.Count > 0)
-                                {
-                                    foreach (var c in cats)
-                                    {
-                                        <li>
-                                            <a class="dropdown-item"
-                                               asp-controller="Products"
-                                               asp-action="Index"
-                                               asp-route-categoryId="@c.Id">
-                                                @c.Name
-                                            </a>
-                                        </li>
-                                    }
-                                }
-                                else
-                                {
-                                    <li><span class="dropdown-item text-muted">Chưa có danh mục</span></li>
-                                }
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Danh mục</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Products" asp-action="Index">Tất cả sản phẩm</a></li>
+                                <li><a class="dropdown-item" asp-controller="Products" asp-action="Index" asp-route-categoryId="1">Cần câu</a></li>
+                                <li><a class="dropdown-item" asp-controller="Products" asp-action="Index" asp-route-categoryId="2">Máy câu</a></li>
+                                <li><a class="dropdown-item" asp-controller="Products" asp-action="Index" asp-route-categoryId="3">Dây / Mồi / Phụ kiện</a></li>
                             </ul>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Cart" asp-action="Index">Giỏ hàng</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
                     </ul>
 
-                    <!-- Center: Search -->
-                    <form class="d-flex mx-lg-4 flex-grow-1 justify-content-center" method="get"
-                          asp-controller="Products" asp-action="Index" role="search" style="max-width:640px;">
-                        <div class="input-group header-search">
+                    <!-- Search -->
+                    <form class="d-flex me-2" asp-controller="Products" asp-action="Index" method="get">
+                        <div class="input-group">
                             <span class="input-group-text">🔍</span>
-                            <input class="form-control" type="search" name="q" placeholder="Tìm sản phẩm, thương hiệu…"
-                                   value="@(Context.Request.Query["q"].ToString())" aria-label="Tìm kiếm" />
+                            <input class="form-control" type="search" name="q" placeholder="Tìm sản phẩm, thương hiệu..." />
                             <button class="btn btn-primary" type="submit">Tìm</button>
                         </div>
                     </form>
 
-                    <!-- Right: Auth -->
-                    <div class="d-flex align-items-center gap-2 auth-actions">
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            <div class="dropdown">
-                                <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    @User.Identity?.Name
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Hồ sơ cá nhân</a></li>
+                    <!-- Account -->
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="dropdown">
+                            <a class="btn btn-outline-secondary dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                @User.Identity!.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Hồ sơ cá nhân</a></li>
+
+                                @* Quản trị nằm CHUNG trong dropdown *@
+                                @if (User.IsInRole("Admin"))
+                                {
                                     <li><hr class="dropdown-divider" /></li>
-                                    <li>
-                                        <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-danger w-100">Đăng xuất</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        }
-                        else
-                        {
-                            <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                            <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Đăng ký</a>
-                        }
-                    </div>
+                                    <li><a class="dropdown-item text-danger" asp-controller="ProductsAdmin" asp-action="Index">Quản lý sản phẩm</a></li>
+                                    <li><a class="dropdown-item text-danger" asp-controller="OrdersAdmin" asp-action="Index">Quản lý đơn hàng</a></li>
+                                }
+
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
+                                        <button type="submit" class="btn btn-danger w-100">Đăng xuất</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                            <a class="btn btn-success" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                        </div>
+                    }
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <!-- MAIN -->
+    <main role="main" class="flex-fill">
+        @RenderBody()
+    </main>
 
-    <footer class="site-footer mt-auto">
-        <div class="footer-top">
-            <div class="container">
-                <div class="row gy-4">
-                    <div class="col-12 col-md-6 col-lg-5">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <img src="~/images/logo.png" alt="Vua Đồ Câu" class="site-logo" />
-                            <h5 class="m-0 fw-bold">VuaĐồCâu</h5>
-                        </div>
-                        <p class="mb-2 text-muted">
-                            Shop đồ câu & phụ kiện – chọn lọc, giá tốt, giao nhanh. Trải nghiệm mua sắm mát lành như một buổi câu.
-                        </p>
-                        <ul class="list-unstyled small text-muted mb-0">
-                            <li>📧 <a href="mailto:thson1602@gmail.com">thson1602@gmail.com</a></li>
-                            <li>📞 <a href="tel:0886214922">0886&nbsp;214&nbsp;922</a></li>
-                        </ul>
+    <!-- FOOTER -->
+    <footer class="site-footer border-top mt-5">
+        <div class="container py-4">
+            <div class="row g-4">
+                <div class="col-12 col-lg-5">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="~/images/logo.png" alt="logo" width="36" height="36" class="rounded-circle" />
+                        <span class="fw-bold">VuaĐồCâu</span>
                     </div>
-                    <div class="col-6 col-md-3 col-lg-3">
-                        <h6 class="fw-bold mb-2">Liên kết nhanh</h6>
-                        <ul class="list-unstyled small">
-                            <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                            <li><a asp-controller="Products" asp-action="Index">Sản phẩm</a></li>
-                            <li><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
-                            <li><a asp-controller="Home" asp-action="Privacy">Liên hệ</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-6 col-md-3 col-lg-4">
-                        <h6 class="fw-bold mb-2">Nhận ưu đãi</h6>
-                        <form class="footer-news d-flex gap-2" onsubmit="alert('Đăng ký nhận tin thành công!'); return false;">
-                            <input type="email" class="form-control" placeholder="Email của bạn" required />
-                            <button class="btn btn-primary" type="submit">Đăng ký</button>
-                        </form>
-                        <p class="small text-muted mt-2 mb-0">Chỉ gửi tin hữu ích. Có thể hủy bất cứ lúc nào.</p>
+                    <p class="mb-2 text-muted">
+                        Shop đồ câu &amp; phụ kiện – chọn lọc, giá tốt, giao nhanh. Trải nghiệm mua sắm mát lành như một buổi câu.
+                    </p>
+                    <div class="small">
+                        <div>📧 <a href="mailto:thson1602@gmail.com">thson1602@gmail.com</a></div>
+                        <div>📞 <a href="tel:0886214922">0886 214 922</a></div>
                     </div>
                 </div>
+
+                <div class="col-6 col-lg-3">
+                    <h6 class="fw-bold mb-3">Liên kết nhanh</h6>
+                    <ul class="list-unstyled small">
+                        <li><a class="link-secondary text-decoration-none" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li><a class="link-secondary text-decoration-none" asp-controller="Products" asp-action="Index">Sản phẩm</a></li>
+                        <li><a class="link-secondary text-decoration-none" asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                        <li><a class="link-secondary text-decoration-none" asp-controller="Profile" asp-action="Index">Liên hệ</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <h6 class="fw-bold mb-3">Nhận ưu đãi</h6>
+                    <form class="input-group">
+                        <input type="email" class="form-control" placeholder="Email của bạn" />
+                        <button class="btn btn-teal" type="button">Đăng ký</button>
+                    </form>
+                    <div class="small text-muted mt-2">Chỉ gửi tin hữu ích. Có thể huỷ bất cứ lúc nào.</div>
+                </div>
             </div>
-        </div>
-        <div class="footer-bar">
-            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                <span class="small text-muted">© @DateTime.Now.Year Vua Đồ Câu</span>
-                <span class="small"><a asp-controller="Home" asp-action="Privacy">Điều khoản & Chính sách</a></span>
+
+            <div class="d-flex justify-content-between align-items-center pt-4 mt-4 border-top small text-muted">
+                <div>© 2025 Vua Đồ Câu</div>
+                <a class="link-secondary text-decoration-none" asp-controller="Home" asp-action="Privacy">Điều khoản &amp; Chính sách</a>
             </div>
         </div>
     </footer>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
