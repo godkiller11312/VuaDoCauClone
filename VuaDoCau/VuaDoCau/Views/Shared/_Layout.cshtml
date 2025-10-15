@@ -1,5 +1,42 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using System.Text.Json
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    // ===== Đếm số lượng sản phẩm trong giỏ từ Session["CART"] =====
+    int cartCount = 0;
+
+    var cartJson = Context.Session.GetString("CART"); // <-- KEY ĐÚNG
+    if (!string.IsNullOrEmpty(cartJson))
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(cartJson);
+            var root = doc.RootElement;
+
+            // Dữ liệu là mảng các Line { ProductId, Quantity }
+            if (root.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var el in root.EnumerateArray())
+                {
+                    if (el.TryGetProperty("Quantity", out var q) && q.ValueKind == JsonValueKind.Number)
+                        cartCount += q.GetInt32();
+                }
+            }
+            // Trường hợp khác (phòng hờ)
+            else if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("Items", out var arr) && arr.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var el in arr.EnumerateArray())
+                {
+                    if (el.TryGetProperty("Quantity", out var q) && q.ValueKind == JsonValueKind.Number)
+                        cartCount += q.GetInt32();
+                }
+            }
+        }
+        catch { /* bỏ qua lỗi parse */ }
+    }
+}
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -39,7 +76,8 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                        @* Giỏ hàng đã chuyển qua dropdown tài khoản *@
+                        @* <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li> *@
                     </ul>
 
                     <!-- Search -->
@@ -59,9 +97,17 @@
                                 @User.Identity!.Name
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
+                                <!-- Giỏ hàng + badge số lượng -->
+                                <li>
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center"
+                                       asp-controller="Cart" asp-action="Index">
+                                        <span>Giỏ hàng</span>
+                                        <span class="badge rounded-pill bg-primary">@cartCount</span>
+                                    </a>
+                                </li>
+
                                 <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Hồ sơ cá nhân</a></li>
 
-                                @* Quản trị nằm CHUNG trong dropdown *@
                                 @if (User.IsInRole("Admin"))
                                 {
                                     <li><hr class="dropdown-divider" /></li>

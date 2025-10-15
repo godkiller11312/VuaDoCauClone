@@ -6,6 +6,7 @@ using VuaDoCau.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// MVC
 builder.Services.AddControllersWithViews();
 
 // DbContext - SQL Server
@@ -28,10 +29,9 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.AccessDeniedPath = "/Account/AccessDenied";
 });
 
-// Session + Cart
+// Session + Cart (dùng Session để đếm số lượng giỏ)
 builder.Services.AddHttpContextAccessor();
-// >>> Thêm dòng này để session có backing store:
-builder.Services.AddDistributedMemoryCache();
+builder.Services.AddDistributedMemoryCache(); // backing store cho Session
 
 builder.Services.AddSession(o =>
 {
@@ -40,6 +40,7 @@ builder.Services.AddSession(o =>
     o.Cookie.IsEssential = true;
 });
 
+// DI cho CartService (nếu bạn đang dùng)
 builder.Services.AddScoped<CartService>();
 
 var app = builder.Build();
@@ -55,7 +56,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Session phải nằm sau UseRouting và trước Auth/Endpoints
+// Session phải bật trước khi đi vào pipeline MVC/Endpoints
 app.UseSession();
 
 app.UseAuthentication();
@@ -65,7 +66,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// migrate + seed
+// Tự động migrate + seed dữ liệu mẫu và tài khoản Admin
 using (var scope = app.Services.CreateScope())
 {
     var sv = scope.ServiceProvider;
@@ -83,7 +84,8 @@ static async Task SeedIdentityAsync(IServiceProvider sv)
     var userMgr = sv.GetRequiredService<UserManager<ApplicationUser>>();
 
     foreach (var r in new[] { "Admin", "User" })
-        if (!await roleMgr.RoleExistsAsync(r)) await roleMgr.CreateAsync(new IdentityRole(r));
+        if (!await roleMgr.RoleExistsAsync(r))
+            await roleMgr.CreateAsync(new IdentityRole(r));
 
     var adminEmail = "admin@vuadocau.local";
     var admin = await userMgr.FindByEmailAsync(adminEmail);
