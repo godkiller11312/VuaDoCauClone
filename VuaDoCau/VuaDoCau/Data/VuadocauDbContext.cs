@@ -12,6 +12,8 @@ public class VuaDoCauDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<VuaDoCau.Models.Review> Reviews { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

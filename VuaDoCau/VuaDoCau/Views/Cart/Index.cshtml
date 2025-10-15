@@ -1,208 +1,107 @@
-﻿@* ===== Cart - Index.cshtml (bản chịu lỗi tốt, không phụ thuộc cố định tên property) ===== *@
-@model VuaDoCau.Controllers.CartController.CartVM
-
-@using System.Reflection
-@using System.Linq
+﻿@model VuaDoCau.Controllers.CartController.CartVM
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Giỏ hàng";
-    Func<decimal, string> VND = v => $"{v:N0} đ";
-
-    // Helpers: đọc dynamic theo đường dẫn "A.B.C", lấy giá trị đầu tiên có dữ liệu
-    object PropPath(object src, string path)
-    {
-        if (src == null || string.IsNullOrWhiteSpace(path)) return null;
-        object cur = src;
-        foreach (var seg in path.Split('.'))
-        {
-            if (cur == null) return null;
-            var t = cur.GetType();
-            var pi = t.GetProperty(seg, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-            if (pi == null) return null;
-            cur = pi.GetValue(cur);
-        }
-        return cur;
-    }
-    object FirstVal(object src, params string[] paths)
-    {
-        foreach (var p in paths)
-        {
-            var v = PropPath(src, p);
-            if (v is string s && !string.IsNullOrWhiteSpace(s)) return s;
-            if (v != null && !(v is string)) return v;
-        }
-        return null;
-    }
-    decimal ToDec(object v)
-    {
-        try { return v == null ? 0M : Convert.ToDecimal(v); } catch { return 0M; }
-    }
-    int ToInt(object v)
-    {
-        try { return v == null ? 0 : Convert.ToInt32(v); } catch { return 0; }
-    }
-
-    // Lấy danh sách item từ VM; nếu null thì rỗng
-    IEnumerable<dynamic> items = (Model?.Items as IEnumerable<dynamic>) ?? Enumerable.Empty<dynamic>();
-
-    // Tính tổng
-    decimal cartTotal = 0M;
-    foreach (var it in items)
-    {
-        cartTotal += ToDec(FirstVal(it, "Subtotal", "LineTotal", "Total", "Sum"));
-    }
-
-    bool isEmpty = !items.Any();
+    var hasItems = Model?.Items != null && Model.Items.Any();
 }
 
 <div class="container py-4">
-    <h1 class="display-6 mb-4">Giỏ hàng</h1>
+    <h1 class="h3 mb-3">Giỏ hàng</h1>
 
     @* Thông báo *@
-    @if (TempData["Success"] is string ok && !string.IsNullOrWhiteSpace(ok))
+    @if (TempData["CartMessage"] != null)
     {
-        <div class="alert alert-success">@ok</div>
+        <div class="alert alert-success">@TempData["CartMessage"]</div>
     }
-    @if (TempData["Error"] is string err && !string.IsNullOrWhiteSpace(err))
+    @if (TempData["CartError"] != null)
     {
-        <div class="alert alert-danger">@err</div>
+        <div class="alert alert-warning">@TempData["CartError"]</div>
     }
 
-    @if (isEmpty)
+    @if (!hasItems)
     {
         <div class="alert alert-info">Giỏ hàng của bạn đang trống.</div>
-        <a class="btn btn-primary" asp-controller="Products" asp-action="Index">Tiếp tục mua sắm</a>
+
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" asp-controller="Products" asp-action="Index">Tiếp tục mua sắm</a>
+
+            <!-- Cho phép bấm luôn, OrdersController sẽ tự kiểm tra rỗng -->
+            <a class="btn btn-success" asp-controller="Orders" asp-action="Checkout">Đặt hàng</a>
+        </div>
     }
     else
-    { 
-        <div class="table-responsive">
+    {
+        <div class="table-responsive mb-3">
             <table class="table align-middle">
-                <thead class="table-light">
+                <thead>
                     <tr>
-                        <th style="width:80px;"></th>
-                        <th>Sản phẩm</th>
-                        <th class="text-end">Giá</th>
-                        <th class="text-center" style="width:160px;">Số lượng</th>
-                        <th class="text-end">Tổng</th>
-                        <th style="width:60px;"></th>
+                        <th style="width:60%">Sản phẩm</th>
+                        <th style="width:12%">Giá</th>
+                        <th style="width:16%">Số lượng</th>
+                        <th style="width:12%" class="text-end">Tạm tính</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in items)
+                    @foreach (var it in Model!.Items)
                     {
-                        var nameObj = FirstVal(item, "Product.Name", "Name", "ProductName", "Title");
-                        var imgObj = FirstVal(item, "Product.ImageUrl", "ImageUrl", "Image", "ImagePath");
-                        var priceObj = FirstVal(item, "UnitPrice", "Price", "Product.Price");
-                        var qtyObj = FirstVal(item, "Quantity", "Qty", "Count");
-                        var subObj = FirstVal(item, "Subtotal", "LineTotal", "Total", "Sum");
-                        var idObj = FirstVal(item, "ProductId", "Id", "Product.Id");
-
-                        string name = Convert.ToString(nameObj) ?? "Sản phẩm";
-                        string img = Convert.ToString(imgObj) ?? "/images/no-image.png";
-                        decimal unitPrice = ToDec(priceObj);
-                        int qty = ToInt(qtyObj);
-                        decimal subtotal = ToDec(subObj);
-                        string prodId = Convert.ToString(idObj) ?? "";
-
                         <tr>
                             <td>
-                                <img src="@img"
-                                     alt="@name"
-                                     class="rounded"
-                                     style="width:64px;height:64px;object-fit:cover;background:#f3f4f6;" />
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@it.ImageUrl" alt="@it.Name" width="48" height="48" class="rounded border bg-light object-fit-cover" />
+                                    <div>
+                                        <div class="fw-semibold">@it.Name</div>
+                                        <form asp-action="Remove" method="post" class="mt-1 d-inline">
+                                            <input type="hidden" name="productId" value="@it.ProductId" />
+                                            <button type="submit" class="btn btn-link p-0 text-danger small">Xoá</button>
+                                            @Html.AntiForgeryToken()
+                                        </form>
+                                    </div>
+                                </div>
                             </td>
 
-                            <td class="fw-semibold">@name</td>
-                            <td class="text-end">@VND(unitPrice)</td>
-
-                            <td class="text-center">
-                                <form asp-controller="Cart" asp-action="Update" method="post" class="d-inline-flex gap-2 align-items-center">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="productId" value="@prodId" />
-                                    <input type="number" name="quantity" min="1"
-                                           value="@qty"
-                                           class="form-control" style="width:110px;" />
-                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Áp dụng</button>
-                                </form>
-                            </td>
-
-                            <td class="text-end fw-bold">@VND(subtotal)</td>
+                            <td>@String.Format("{0:N0} đ", it.UnitPrice)</td>
 
                             <td>
-                                <form asp-controller="Cart" asp-action="Remove" method="post">
+                                <form asp-action="Update" method="post" class="d-flex align-items-center gap-2">
+                                    <input type="hidden" name="productId" value="@it.ProductId" />
+                                    <input type="number" name="quantity" value="@it.Quantity" min="1" class="form-control" style="max-width:90px" />
+                                    <button type="submit" class="btn btn-outline-primary btn-sm">Áp dụng</button>
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="productId" value="@prodId" />
-                                    <button type="submit" class="btn btn-link text-danger p-0" title="Xoá">✕</button>
                                 </form>
                             </td>
+
+                            <td class="text-end fw-semibold">@String.Format("{0:N0} đ", it.Subtotal)</td>
                         </tr>
                     }
                 </tbody>
-
-                <tfoot class="table-light">
+                <tfoot>
                     <tr>
-                        <th colspan="4" class="text-end">Tổng cộng</th>
-                        <th class="text-end">@VND(cartTotal)</th>
-                        <th></th>
+                        <th colspan="3" class="text-end">Tạm tính:</th>
+                        <th class="text-end">@String.Format("{0:N0} đ", Model!.Subtotal)</th>
+                    </tr>
+                    <tr>
+                        <th colspan="3" class="text-end">Phí vận chuyển:</th>
+                        <th class="text-end">@String.Format("{0:N0} đ", Model!.Shipping)</th>
+                    </tr>
+                    <tr>
+                        <th colspan="3" class="text-end">Tổng cộng:</th>
+                        <th class="text-end text-success fs-5">@String.Format("{0:N0} đ", Model!.Total)</th>
                     </tr>
                 </tfoot>
             </table>
         </div>
-        <div class="d-flex gap-2 justify-content-end">
-            <!-- Đổi về Home/Index để tránh layout lồi/overflow -->
-            <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">
-                Tiếp tục mua sắm
-            </a>
 
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <form asp-controller="Orders" asp-action="Checkout" method="post" class="d-inline">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-success px-4">Đặt hàng</button>
-                </form>
-            }
-            else
-            {
-                <button type="button"
-                        class="btn btn-success px-4"
-                        data-bs-toggle="modal"
-                        data-bs-target="#loginPromptModal">
-                    Đặt hàng
-                </button>
-            }
+        <div class="d-flex flex-wrap gap-2">
+            <form asp-action="Clear" method="post">
+                <button type="submit" class="btn btn-outline-danger">Xoá toàn bộ</button>
+                @Html.AntiForgeryToken()
+            </form>
+
+            <a class="btn btn-outline-secondary" asp-controller="Products" asp-action="Index">Tiếp tục mua sắm</a>
+
+            <!-- Cho phép bấm luôn; server sẽ kiểm tra session -->
+            <a class="btn btn-success" asp-controller="Orders" asp-action="Checkout">Đặt hàng</a>
         </div>
-
     }
-</div>
-
-@* MODAL: nhắc đăng nhập/đăng ký khi chưa đăng nhập *@
-<div class="modal fade" id="loginPromptModal" tabindex="-1" aria-labelledby="loginPromptLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header">
-                <h5 class="modal-title" id="loginPromptLabel">Hoàn tất đặt hàng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-3">Bạn cần đăng nhập để tiếp tục đặt hàng.</p>
-                <div class="d-grid gap-2">
-                    <a class="btn btn-primary"
-                       asp-controller="Account"
-                       asp-action="Login"
-                       asp-route-returnUrl="@Url.Action("Index", "Cart")">
-                        Đăng nhập
-                    </a>
-                    <a class="btn btn-outline-primary"
-                       asp-controller="Account"
-                       asp-action="Register"
-                       asp-route-returnUrl="@Url.Action("Index", "Cart")">
-                        Đăng ký
-                    </a>
-                </div>
-                <div class="text-muted small mt-3">
-                    Sau khi đăng nhập/đăng ký, bạn sẽ được chuyển về giỏ hàng để tiếp tục.
-                </div>
-            </div>
-        </div>
-    </div>
 </div>

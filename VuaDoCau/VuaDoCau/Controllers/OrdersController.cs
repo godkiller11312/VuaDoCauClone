@@ -12,13 +12,18 @@ namespace VuaDoCau.Controllers
 
         public OrdersController(VuaDoCauDbContext db) => _db = db;
 
-        private class Line { public int ProductId { get; set; } public int Quantity { get; set; } }
+        private class Line
+        {
+            public int ProductId { get; set; }
+            public int Quantity { get; set; }
+        }
 
+        // ===== Helpers =====
         private List<Line> GetCartRaw()
         {
             var json = HttpContext.Session.GetString(CART_KEY);
             if (string.IsNullOrEmpty(json)) return new List<Line>();
-            try { return JsonSerializer.Deserialize<List<Line>>(json) ?? new List<Line>(); }
+            try { return JsonSerializer.Deserialize<List<Line>>(json) ?? new List<Line>(); } 
             catch { return new List<Line>(); }
         }
 
@@ -32,10 +37,13 @@ namespace VuaDoCau.Controllers
             foreach (var l in lines)
             {
                 if (!prods.TryGetValue(l.ProductId, out var p)) continue;
+
                 dynamic it = new ExpandoObject();
                 it.ProductId = p.Id;
                 it.Name = p.Name;
-                it.ImageUrl = string.IsNullOrWhiteSpace(p.ImageUrl) ? "/images/no-image.png" : p.ImageUrl;
+                it.ImageUrl = string.IsNullOrWhiteSpace(p.ImageUrl)
+                    ? "/images/no-image.png"
+                    : p.ImageUrl;
                 it.UnitPrice = p.Price;
                 it.Quantity = l.Quantity;
                 it.Subtotal = p.Price * l.Quantity;
@@ -47,7 +55,7 @@ namespace VuaDoCau.Controllers
         private void FillTotalsToViewBag()
         {
             var items = BuildItems();
-            decimal subtotal = 0m; foreach (dynamic it in items) subtotal += (decimal)it.Subtotal;
+            decimal subtotal = items.Sum(it => (decimal)it.Subtotal);
             decimal shipping = items.Any() ? 25000m : 0m;
             ViewBag.Items = items;
             ViewBag.Subtotal = subtotal;
@@ -55,7 +63,7 @@ namespace VuaDoCau.Controllers
             ViewBag.Total = subtotal + shipping;
         }
 
-        // ----- /Orders/Create  (GET)
+        // ===== GET: /Orders/Create =====
         [HttpGet]
         public IActionResult Create()
         {
@@ -65,11 +73,12 @@ namespace VuaDoCau.Controllers
                 TempData["CartMessage"] = "Giỏ hàng trống, không thể thanh toán.";
                 return RedirectToAction("Index", "Cart");
             }
+
             FillTotalsToViewBag();
             return View(); // Views/Orders/Create.cshtml
         }
 
-        // ----- /Orders/Create  (POST)
+        // ===== POST: /Orders/Create =====
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(string? fullName, string? phone, string? email, string? address, string? note)
@@ -81,16 +90,31 @@ namespace VuaDoCau.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
-            // TODO: Map items -> Order/OrderItem của dự án nếu muốn lưu DB.
+            // TODO: Lưu vào bảng Orders/OrderItems nếu bạn có Entity tương ứng
+            // var order = new Order { ... };
+            // _db.Orders.Add(order); _db.SaveChanges();
+
             HttpContext.Session.Remove(CART_KEY);
             TempData["CartMessage"] = "Đặt hàng thành công! Admin sẽ xác nhận giao hàng.";
             return RedirectToAction("Index", "Cart");
         }
 
-        // ----- Alias để ai trỏ /Orders/Checkout vẫn dùng được
+        // ===== GET: /Orders/Checkout (alias) =====
         [HttpGet]
-        public IActionResult Checkout() => Create();
+        public IActionResult Checkout()
+        {
+            var items = BuildItems();
+            if (!items.Any())
+            {
+                TempData["CartMessage"] = "Giỏ hàng đang trống. Vui lòng thêm sản phẩm trước khi đặt.";
+                return RedirectToAction("Index", "Cart");
+            }
 
+            FillTotalsToViewBag();
+            return View("Create");
+        }
+
+        // ===== POST: /Orders/Checkout (alias) =====
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Checkout(string? fullName, string? phone, string? email, string? address, string? note)

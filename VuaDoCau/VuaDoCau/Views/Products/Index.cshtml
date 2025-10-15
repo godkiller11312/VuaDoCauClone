@@ -1,33 +1,74 @@
 ﻿@model IEnumerable<VuaDoCau.Models.Product>
+@using Microsoft.EntityFrameworkCore
+@inject VuaDoCau.Data.VuaDoCauDbContext Db
+
 @{
     ViewData["Title"] = "Sản phẩm";
-    var cat = ViewBag.Cat as string;
-    var cats = ViewBag.Categories as IEnumerable<VuaDoCau.Models.Category>;
-}
-<h1 class="h4 mb-3">Sản phẩm @if(!string.IsNullOrEmpty(cat)){
-<text>- @cats!.First(x => x.Slug == cat).Name</text>
-}
-</h1>
+    var ids = Model.Select(m => m.Id).ToList();
 
-<div class="row row-cols-1 row-cols-md-4 g-3">
-    @foreach (var p in Model)
-    {
-        <div class="col">
-            <div class="card h-100">
-                <img class="card-img-top" src="@p.ImageUrl" alt="@p.Name" />
-                <div class="card-body">
-                    <div class="small text-muted">@p.Category.Name</div>
-                    <h6 class="card-title">@p.Name</h6>
-                    <div class="fw-bold">@string.Format("{0:N0} đ", p.Price)</div>
-                </div>
-                <div class="card-footer bg-white d-flex gap-2">
-                    <a class="btn btn-sm btn-outline-primary" asp-action="Detail" asp-route-slug="@p.Slug">Xem</a>
-                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
-                        <input type="hidden" name="id" value="@p.Id" />
-                        <button class="btn btn-sm btn-primary" type="submit">Thêm vào giỏ</button>
-                    </form>
+    // Lấy thống kê rating & purchase cho tất cả sản phẩm đang hiển thị (1 lượt truy vấn)
+    var ratingStats = await Db.Reviews
+        .Where(r => ids.Contains(r.ProductId))
+        .GroupBy(r => r.ProductId)
+        .Select(g => new { ProductId = g.Key, Avg = g.Average(x => x.Stars), Cnt = g.Count() })
+        .ToDictionaryAsync(x => x.ProductId, x => new { Avg = (decimal)x.Avg, Cnt = x.Cnt });
+
+    var purchaseStats = await (from oi in Db.OrderItems
+                               join o in Db.Orders on oi.OrderId equals o.Id
+                               where ids.Contains(oi.ProductId) && (o.Status == "Completed" || o.Status == "Delivered" || o.Status == "Paid")
+                               group oi by oi.ProductId into g
+                               select new { ProductId = g.Key, Bought = g.Sum(x => x.Quantity) })
+                               .ToDictionaryAsync(x => x.ProductId, x => x.Bought);
+}
+
+<div class="container py-4">
+    <h1 class="h4 mb-3">Sản phẩm</h1>
+
+    <div class="row g-3">
+        @foreach (var item in Model)
+        {
+            // Lấy thông tin rating & đã mua
+            var hasR = ratingStats.TryGetValue(item.Id, out var r);
+            var avg = hasR ? Math.Round(r!.Avg, 2) : 0m;
+            var cnt = hasR ? r!.Cnt : 0;
+            var bought = purchaseStats.TryGetValue(item.Id, out var b) ? b : 0;
+
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="card h-100">
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                        <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
+                             class="card-img-top" alt="@item.Name" />
+                    </a>
+                    <div class="card-body d-flex flex-column">
+                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">
+                            <h6 class="card-title text-truncate">@item.Name</h6>
+                        </a>
+
+                        @* Đánh giá sao + Lượt mua *@
+                        @{
+                            int full = (int)Math.Floor(avg);
+                            bool half = (avg - full) >= 0.5m;
+                            int empty = 5 - full - (half ? 1 : 0);
+                            var starStr = new string('★', full) + (half ? "☆" : "") + new string('☆', empty);
+                        }
+                        <div class="small text-muted mb-1 d-flex align-items-center gap-2">
+                            <span class="text-warning">@starStr</span>
+                            <span>(@cnt)</span>
+                            <span class="ms-2">Đã mua: <strong>@bought</strong></span>
+                        </div>
+
+                        <div class="mt-auto">
+                            <div class="fw-bold text-danger mb-2">@String.Format("{0:N0} đ", item.Price)</div>
+                            <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-2">
+                                <input type="hidden" name="productId" value="@item.Id" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-primary btn-sm">Thêm vào giỏ</button>
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VuaDoCau.Data;
 
@@ -11,9 +12,11 @@ using VuaDoCau.Data;
 namespace VuaDoCau.Migrations
 {
     [DbContext(typeof(VuaDoCauDbContext))]
-    partial class VuaDoCauDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251015073311_AddReview")]
+    partial class AddReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

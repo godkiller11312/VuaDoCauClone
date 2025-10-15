@@ -1,65 +1,122 @@
 ﻿@model VuaDoCau.Models.Product
+@using Microsoft.EntityFrameworkCore
+@inject VuaDoCau.Data.VuaDoCauDbContext Db
+
 @{
-    ViewData["Title"] = "Chi tiết sản phẩm";
+    ViewData["Title"] = Model.Name;
+
+    // Thống kê đánh giá
+    var stats = await Db.Reviews
+        .Where(r => r.ProductId == Model.Id)
+        .GroupBy(r => r.ProductId)
+        .Select(g => new { Avg = g.Average(x => x.Stars), Cnt = g.Count() })
+        .FirstOrDefaultAsync();
+
+    decimal ratingAvg = stats?.Avg is null ? 0m : Math.Round((decimal)stats.Avg, 2);
+    int ratingCnt = stats?.Cnt ?? 0;
+
+    // Đã mua (sửa trạng thái cho khớp thực tế nếu khác)
+    var bought = await (from oi in Db.OrderItems
+                        join o in Db.Orders on oi.OrderId equals o.Id
+                        where oi.ProductId == Model.Id
+                              && (o.Status == "Completed" || o.Status == "Delivered" || o.Status == "Paid")
+                        select (int?)oi.Quantity).SumAsync() ?? 0;
 }
 
 <div class="container py-4">
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item">
-                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@Model.CategoryId">
-                    @Model.Category?.Name
-                </a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
-        </ol>
-    </nav>
-
     <div class="row g-4">
-        <div class="col-12 col-md-6">
-            <div class="card p-2">
-                <img src="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/no-image.png" : Model.ImageUrl)"
-                     alt="@Model.Name"
-                     class="w-100"
-                     style="border-radius:8px; object-fit:contain; aspect-ratio:1/1; background:#f3f4f6;" />
-            </div>
+        <div class="col-md-5">
+            <img src="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/no-image.png" : Model.ImageUrl)"
+                 class="img-fluid rounded" alt="@Model.Name" />
         </div>
 
-        <div class="col-12 col-md-6">
-            <div class="card p-3">
-                <h2 class="mb-2">@Model.Name</h2>
-                <div class="text-muted mb-2">Danh mục: <strong>@Model.Category?.Name</strong></div>
+        <div class="col-md-7">
+            <h1 class="h3 mb-2">@Model.Name</h1>
 
-                <div class="h4 fw-bold mb-1">@($"{Model.Price:N0} đ")</div>
-                @if (Model.OldPrice.HasValue && Model.OldPrice.Value > 0 && Model.OldPrice > Model.Price)
-                {
-                    <div class="text-decoration-line-through text-muted mb-2">
-                        @($"{Model.OldPrice.Value:N0} đ")
-                    </div>
-                }
+            <div class="mb-2 d-flex align-items-center gap-2">
+                @await Html.PartialAsync("_Stars", ratingAvg)
+                <span class="text-muted small">(@ratingCnt đánh giá)</span>
+                <span class="text-muted small">• Đã mua: <strong>@bought</strong></span>
+            </div>
 
-                @* Hiển thị mô tả ngắn từ cột Summary *@
-                @if (!string.IsNullOrWhiteSpace(Model.Summary))
-                {
-                    <div class="mb-3">
-                        <h6 class="fw-bold mb-1">Mô tả</h6>
-                        <div class="text-muted">@Model.Summary</div>
-                    </div>
-                }
+            <div class="fs-4 fw-bold text-danger mb-3">
+                @String.Format("{0:N0} đ", Model.Price)
+            </div>
 
-                <div class="d-flex align-items-center gap-2">
-                    <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex align-items-center gap-2">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="productId" value="@Model.Id" />
-                        <input type="number" name="quantity" value="1" min="1"
-                               class="form-control qty-input" style="width:110px;" />
-                        <button type="submit" class="btn btn-primary">Thêm vào giỏ</button>
-                    </form>
-                    <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@Model.CategoryId"
-                       class="btn btn-outline-secondary">Quay lại danh mục</a>
+            <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex align-items-center gap-2">
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <input type="number" name="quantity" class="form-control" value="1" min="1" style="max-width:120px" />
+                <button type="submit" class="btn btn-primary">Thêm vào giỏ</button>
+                @Html.AntiForgeryToken()
+            </form>
+
+            @* Nếu sau này bạn thêm thuộc tính Description vào Product, có thể mở lại block dưới:
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <div class="mt-4">
+                    <h5>Mô tả</h5>
+                    <div>@Html.Raw(Model.Description)</div>
                 </div>
+            }
+            *@
+
+            <div class="mt-5">
+                <h5>Gửi đánh giá</h5>
+                <form asp-controller="Reviews" asp-action="Add" method="post" class="row g-2">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <div class="col-auto">
+                        <select name="stars" class="form-select">
+                            <option value="5">5 ★</option>
+                            <option value="4">4 ★</option>
+                            <option value="3">3 ★</option>
+                            <option value="2">2 ★</option>
+                            <option value="1">1 ★</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <input name="comment" class="form-control" placeholder="Nhận xét (tuỳ chọn)" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-success">Gửi</button>
+                    </div>
+                    @Html.AntiForgeryToken()
+                </form>
+                @if (TempData["Msg"] != null)
+                {
+                    <div class="alert alert-success mt-2">@TempData["Msg"]</div>
+                }
             </div>
         </div>
+    </div>
+
+    <div class="mt-5">
+        <h5>Đánh giá gần đây</h5>
+        @{
+            var latest = await Db.Reviews
+            .Where(r => r.ProductId == Model.Id)
+            .OrderByDescending(r => r.CreatedAt)
+            .Take(10)
+            .ToListAsync();
+        }
+        @if (latest.Count == 0)
+        {
+            <div class="text-muted">Chưa có đánh giá nào.</div>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var r in latest)
+                {
+                    <li class="list-group-item">
+                        <strong>@r.Stars ★</strong>
+                        <span class="text-muted small"> • @r.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                        @if (!string.IsNullOrWhiteSpace(r.Comment))
+                        {
+                            <div>@r.Comment</div>
+                        }
+                    </li>
+                }
+            </ul>
+        }
     </div>
 </div>

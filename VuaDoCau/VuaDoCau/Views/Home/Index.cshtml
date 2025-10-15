@@ -1,143 +1,96 @@
-﻿@using VuaDoCau.Models
-@model IEnumerable<Category>
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.EntityFrameworkCore
+@inject VuaDoCau.Data.VuaDoCauDbContext Db
 
 @{
     ViewData["Title"] = "Trang chủ";
-    string VND(decimal v) => $"{v:N0} đ";
+    var wanted = new[] { "Dây / Mồi / Phụ kiện", "Cần câu", "Máy câu" };
+
+    // Lấy tất cả category có trong danh sách wanted
+    var cats = await Db.Categories
+        .Where(c => wanted.Contains(c.Name))
+        .ToListAsync();  // Lấy dữ liệu mà không sắp xếp
+
+    // Sắp xếp category theo thứ tự trong mảng wanted sau khi lấy dữ liệu
+    cats = cats.OrderBy(c => Array.IndexOf(wanted, c.Name)).ToList();
+
+    // Lấy thêm các category không có trong danh sách wanted
+    var extraCats = await Db.Categories
+        .Where(c => !wanted.Contains(c.Name))
+        .OrderBy(c => c.Name)
+        .ToListAsync();
+
+    var allCats = cats.Concat(extraCats).ToList();
+
+    // Lấy sản phẩm của các category
+    var ids = allCats.Select(c => c.Id).ToList();
+    var products = await Db.Products
+        .Where(p => ids.Contains(p.CategoryId))
+        .OrderByDescending(p => p.Id)
+        .ToListAsync();
+
+    // Lấy thống kê rating & purchase cho tất cả sản phẩm đang hiển thị (1 lượt truy vấn)
+    var ratingStats = await Db.Reviews
+        .Where(r => products.Select(p => p.Id).Contains(r.ProductId))
+        .GroupBy(r => r.ProductId)
+        .Select(g => new { ProductId = g.Key, Avg = g.Average(x => x.Stars), Cnt = g.Count() })
+        .ToDictionaryAsync(x => x.ProductId, x => new { Avg = (decimal)x.Avg, Cnt = x.Cnt });
+
+    var purchaseStats = await (from oi in Db.OrderItems
+                               join o in Db.Orders on oi.OrderId equals o.Id
+                               where products.Select(p => p.Id).Contains(oi.ProductId) && (o.Status == "Completed" || o.Status == "Delivered" || o.Status == "Paid")
+                               group oi by oi.ProductId into g
+                               select new { ProductId = g.Key, Bought = g.Sum(x => x.Quantity) })
+                               .ToDictionaryAsync(x => x.ProductId, x => x.Bought);
 }
 
-<style>
-    .home-section {
-        margin-bottom: 2.5rem;
-    }
-
-    .home-head {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: .75rem;
-    }
-
-        .home-head .tag {
-            background: #0d6efd;
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-        }
-
-        .home-head .rule {
-            flex: 1;
-            height: 2px;
-            background: #e9ecef;
-        }
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 14px;
-    }
-
-    @@media (max-width: 1200px) {
-        .grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-
-    @@media (max-width: 992px) {
-        .grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    @@media (max-width: 768px) {
-        .grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    .card {
-        border: 1px solid #e9ecef;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #fff;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .thumb {
-        aspect-ratio: 1 / 1;
-        width: 100%;
-        object-fit: cover;
-        background: #f3f4f6;
-    }
-
-    .body {
-        padding: 10px 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .title {
-        font-weight: 600;
-        min-height: 44px;
-        line-height: 1.2;
-    }
-
-    .price {
-        font-weight: 700;
-    }
-
-    .actions {
-        margin-top: auto;
-        display: flex;
-        gap: 8px;
-    }
-
-        .actions .btn {
-            flex: 1;
-        }
-</style>
-
 <div class="container py-4">
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info">Chưa có danh mục/sản phẩm để hiển thị.</div>
-    }
-    else
-    {
-        foreach (var cat in Model)
-        {
-            <section class="home-section">
-                <div class="home-head">
-                    <div class="tag">@cat.Name</div>
-                    <div class="rule"></div>
-                </div>
+    <h1 class="h4 mb-3">Sản phẩm</h1>
 
-                <div class="grid">
-                    @foreach (var p in (cat.Products ?? new List<Product>()).OrderByDescending(x => x.Id).Take(5))
-                    {
-                        var img = string.IsNullOrWhiteSpace(p.ImageUrl) ? "/images/no-image.png" : p.ImageUrl;
-                        <div class="card">
-                            <img src="@img" alt="@p.Name" class="thumb" />
-                            <div class="body">
-                                <div class="title">@p.Name</div>
-                                <div class="price">@VND(p.Price)</div>
-                                <div class="actions">
-                                    <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline-secondary btn-sm">Xem chi tiết</a>
-                                    <form asp-controller="Cart" asp-action="Add" method="post" class="m-0">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="productId" value="@p.Id" />
-                                        <button type="submit" class="btn btn-primary btn-sm">Thêm vào giỏ</button>
-                                    </form>
-                                </div>
-                            </div>
+    <div class="row g-3">
+        @foreach (var item in products)
+        {
+            var hasR = ratingStats.TryGetValue(item.Id, out var r);
+            var avg = hasR ? Math.Round(r!.Avg, 2) : 0m;
+            var cnt = hasR ? r!.Cnt : 0;
+            var bought = purchaseStats.TryGetValue(item.Id, out var b) ? b : 0;
+
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="card h-100">
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                        <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
+                             class="card-img-top" alt="@item.Name" />
+                    </a>
+                    <div class="card-body d-flex flex-column">
+                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">
+                            <h6 class="card-title text-truncate">@item.Name</h6>
+                        </a>
+
+                        @* Đánh giá sao + Lượt mua *@
+                        @{
+                            int full = (int)Math.Floor(avg);
+                            bool half = (avg - full) >= 0.5m;
+                            int empty = 5 - full - (half ? 1 : 0);
+                            var starStr = new string('★', full) + (half ? "☆" : "") + new string('☆', empty);
+                        }
+                        <div class="small text-muted mb-1 d-flex align-items-center gap-2">
+                            <span class="text-warning">@starStr</span>
+                            <span>(@cnt)</span>
+                            <span class="ms-2">Đã mua: <strong>@bought</strong></span>
                         </div>
-                    }
+
+                        <div class="mt-auto">
+                            <div class="fw-bold text-danger mb-2">@String.Format("{0:N0} đ", item.Price)</div>
+                            <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-2">
+                                <input type="hidden" name="productId" value="@item.Id" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-primary btn-sm">Thêm vào giỏ</button>
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </section>
+            </div>
         }
-    }
+    </div>
 </div>
