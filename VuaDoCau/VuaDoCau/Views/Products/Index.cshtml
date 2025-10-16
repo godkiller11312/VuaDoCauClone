@@ -1,74 +1,151 @@
-﻿@model IEnumerable<VuaDoCau.Models.Product>
-@using Microsoft.EntityFrameworkCore
+﻿@using VuaDoCau.Models
+@model ProfileViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @inject VuaDoCau.Data.VuaDoCauDbContext Db
+@using Microsoft.EntityFrameworkCore
+@using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Sản phẩm";
-    var ids = Model.Select(m => m.Id).ToList();
+    ViewData["Title"] = "Hồ sơ cá nhân";
+    string FormatVND(decimal v) => $"{v:N0} đ";
+    bool IsPending(string s)
+    {
+        s = (s ?? "").Trim();
+        return s.Equals("Pending", System.StringComparison.OrdinalIgnoreCase)
+            || s.Equals("Chờ xác nhận", System.StringComparison.OrdinalIgnoreCase)
+            || s.Equals("Cho xac nhan", System.StringComparison.OrdinalIgnoreCase);
+    }
+    bool IsShipping(string s) => string.Equals((s ?? "").Trim(), "Shipping", System.StringComparison.OrdinalIgnoreCase);
 
-    // Lấy thống kê rating & purchase cho tất cả sản phẩm đang hiển thị (1 lượt truy vấn)
-    var ratingStats = await Db.Reviews
-        .Where(r => ids.Contains(r.ProductId))
-        .GroupBy(r => r.ProductId)
-        .Select(g => new { ProductId = g.Key, Avg = g.Average(x => x.Stars), Cnt = g.Count() })
-        .ToDictionaryAsync(x => x.ProductId, x => new { Avg = (decimal)x.Avg, Cnt = x.Cnt });
+    int? rateOrderId = null;
+    if (TempData["RateOrderId"] is int idFromTemp) rateOrderId = idFromTemp;
 
-    var purchaseStats = await (from oi in Db.OrderItems
-                               join o in Db.Orders on oi.OrderId equals o.Id
-                               where ids.Contains(oi.ProductId) && (o.Status == "Completed" || o.Status == "Delivered" || o.Status == "Paid")
-                               group oi by oi.ProductId into g
-                               select new { ProductId = g.Key, Bought = g.Sum(x => x.Quantity) })
-                               .ToDictionaryAsync(x => x.ProductId, x => x.Bought);
+    var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
 <div class="container py-4">
-    <h1 class="h4 mb-3">Sản phẩm</h1>
+    <h2 class="mb-3">Hồ sơ cá nhân</h2>
 
-    <div class="row g-3">
-        @foreach (var item in Model)
-        {
-            // Lấy thông tin rating & đã mua
-            var hasR = ratingStats.TryGetValue(item.Id, out var r);
-            var avg = hasR ? Math.Round(r!.Avg, 2) : 0m;
-            var cnt = hasR ? r!.Cnt : 0;
-            var bought = purchaseStats.TryGetValue(item.Id, out var b) ? b : 0;
+    <div class="mb-4">
+        <div><strong>Họ tên:</strong> @Model.FullName</div>
+        <div><strong>Email:</strong> @Model.Email</div>
+        <div><strong>SDT:</strong> @Model.PhoneNumber</div>
+        <div><strong>Địa chỉ:</strong> @Model.Address</div>
+    </div>
 
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="card h-100">
-                    <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
-                        <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)"
-                             class="card-img-top" alt="@item.Name" />
-                    </a>
-                    <div class="card-body d-flex flex-column">
-                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">
-                            <h6 class="card-title text-truncate">@item.Name</h6>
-                        </a>
+    <h3 class="mb-3">Lịch sử đơn hàng</h3>
 
-                        @* Đánh giá sao + Lượt mua *@
-                        @{
-                            int full = (int)Math.Floor(avg);
-                            bool half = (avg - full) >= 0.5m;
-                            int empty = 5 - full - (half ? 1 : 0);
-                            var starStr = new string('★', full) + (half ? "☆" : "") + new string('☆', empty);
-                        }
-                        <div class="small text-muted mb-1 d-flex align-items-center gap-2">
-                            <span class="text-warning">@starStr</span>
-                            <span>(@cnt)</span>
-                            <span class="ms-2">Đã mua: <strong>@bought</strong></span>
-                        </div>
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 90px;">Mã đơn</th>
+                    <th style="width: 200px;">Ngày</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end" style="width: 160px;">Tổng</th>
+                    <th style="width: 240px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Orders == null || !Model.Orders.Any())
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-5">Chưa có đơn hàng.</td></tr>
+                }
+                else
+                {
+                    foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt))
+                    {
+                        <tr>
+                            <td><strong>#@order.Id</strong></td>
+                            <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@order.Status</td>
+                            <td class="text-end">@FormatVND(order.Total)</td>
+                            <td class="text-end">
+                                @if (IsPending(order.Status))
+                                {
+                                    <form asp-action="Cancel" asp-controller="Profile" method="post" class="d-inline" onsubmit="return confirm('Hủy đơn #@order.Id ?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@order.Id" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Hủy đơn</button>
+                                    </form>
+                                }
+                                else if (IsShipping(order.Status))
+                                {
+                                    <form asp-action="ConfirmReceived" asp-controller="Profile" method="post" class="d-inline" onsubmit="return confirm('Xác nhận đã nhận đơn #@order.Id ?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@order.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm">Đã nhận hàng</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
 
-                        <div class="mt-auto">
-                            <div class="fw-bold text-danger mb-2">@String.Format("{0:N0} đ", item.Price)</div>
-                            <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-2">
-                                <input type="hidden" name="productId" value="@item.Id" />
-                                <input type="hidden" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-primary btn-sm">Thêm vào giỏ</button>
-                                @Html.AntiForgeryToken()
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
+                        <tr class="table-borderless">
+                            <td></td>
+                            <td colspan="4" class="text-muted">
+                                @if (order.Items != null && order.Items.Any())
+                                {
+                                    <div class="mb-2">
+                                        @foreach (var it in order.Items)
+                                        {
+                                            <div><span>@it.ProductName × @it.Quantity</span></div>
+                                        }
+                                    </div>
+
+                                    @* Vừa hoàn tất đơn này → hiển thị block đánh giá *@
+                                    @if (rateOrderId.HasValue && rateOrderId.Value == order.Id)
+                                    {
+                                        <div class="border rounded p-3 bg-light">
+                                            <div class="fw-bold mb-2">Đánh giá sản phẩm cho đơn #@order.Id</div>
+
+                                            @foreach (var it in order.Items)
+                                            {
+                                                var reviewed = uid != null
+                                                ? await Db.Reviews.AnyAsync(r => r.ProductId == it.ProductId && r.UserId == uid)
+                                                : false;
+
+                                                <div class="border rounded p-2 mb-3">
+                                                    <div class="mb-2">@it.ProductName</div>
+
+                                                    @if (!reviewed)
+                                                    {
+                                                        <form asp-controller="Reviews" asp-action="Add" method="post" class="d-flex gap-2 flex-wrap">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="productId" value="@it.ProductId" />
+                                                            <input type="hidden" name="backOrderId" value="@order.Id" />
+
+                                                            <div class="d-flex align-items-center gap-1">
+                                                                @for (var s = 1; s <= 5; s++)
+                                                                {
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input" type="radio" name="stars" id="p@it.ProductId-s@s" value="@s" @(s == 5 ? "checked" : null) />
+                                                                        <label class="form-check-label" for="p@it.ProductId-s@s">@s★</label>
+                                                                    </div>
+                                                                }
+                                                            </div>
+
+                                                            <input name="comment" class="form-control flex-grow-1" placeholder="Nhận xét (tuỳ chọn)" />
+                                                            <button class="btn btn-primary btn-sm" type="submit">Gửi đánh giá</button>
+                                                        </form>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-success small">Bạn đã đánh giá sản phẩm này.</span>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <span>(Không có dòng hàng)</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
     </div>
 </div>

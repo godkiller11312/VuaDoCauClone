@@ -41,6 +41,7 @@ namespace VuaDoCau.Controllers
                     Total = o.Total,
                     Items = o.Items.Select(i => new OrderItemVM
                     {
+                        ProductId = i.ProductId,                                // <-- THÊM
                         Quantity = i.Quantity,
                         ProductName = i.Product != null ? i.Product.Name : "(Sản phẩm)"
                     }).ToList()
@@ -59,7 +60,6 @@ namespace VuaDoCau.Controllers
             return View(vm);
         }
 
-        // User hủy đơn khi còn chờ xác nhận
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Cancel(int id)
@@ -89,7 +89,6 @@ namespace VuaDoCau.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // User xác nhận đã nhận hàng → Completed
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ConfirmReceived(int id)
@@ -100,17 +99,20 @@ namespace VuaDoCau.Controllers
             if (order == null) return NotFound();
 
             var s = (order.Status ?? "").Trim();
-            if (s.Equals("Shipping", StringComparison.OrdinalIgnoreCase))
+            // Cho phép từ Shipping/Delivered/Paid ... => Completed
+            if (!s.Equals("Completed", StringComparison.OrdinalIgnoreCase))
             {
                 order.Status = "Completed";
                 _db.SaveChanges();
                 TempData["Success"] = $"Đơn #{order.Id} đã hoàn tất.";
             }
 
+            // Báo cho View biết hiển thị khối đánh giá cho đơn này
+            TempData["RateOrderId"] = order.Id;
+
             return RedirectToAction(nameof(Index));
         }
 
-        // (tuỳ chọn) cập nhật hồ sơ cơ bản
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateProfile(ProfileViewModel input)

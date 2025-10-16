@@ -1,5 +1,6 @@
 ﻿@model VuaDoCau.Models.Product
 @using Microsoft.EntityFrameworkCore
+@using System.Security.Claims
 @inject VuaDoCau.Data.VuaDoCauDbContext Db
 
 @{
@@ -15,12 +16,18 @@
     decimal ratingAvg = stats?.Avg is null ? 0m : Math.Round((decimal)stats.Avg, 2);
     int ratingCnt = stats?.Cnt ?? 0;
 
-    // Đã mua (sửa trạng thái cho khớp thực tế nếu khác)
+    // Đã mua (tuỳ trạng thái bạn dùng)
     var bought = await (from oi in Db.OrderItems
                         join o in Db.Orders on oi.OrderId equals o.Id
                         where oi.ProductId == Model.Id
                               && (o.Status == "Completed" || o.Status == "Delivered" || o.Status == "Paid")
                         select (int?)oi.Quantity).SumAsync() ?? 0;
+
+    // Xác định đã đánh giá hay chưa (1 user/1 sản phẩm chỉ 1 lần)
+    var uid = User.Identity?.IsAuthenticated == true ? User.FindFirstValue(ClaimTypes.NameIdentifier) : null;
+    var hasReviewed = uid != null
+        ? await Db.Reviews.AnyAsync(r => r.ProductId == Model.Id && r.UserId == uid)
+        : false;
 }
 
 <div class="container py-4">
@@ -50,37 +57,42 @@
                 @Html.AntiForgeryToken()
             </form>
 
-            @* Nếu sau này bạn thêm thuộc tính Description vào Product, có thể mở lại block dưới:
-            @if (!string.IsNullOrWhiteSpace(Model.Description))
-            {
-                <div class="mt-4">
-                    <h5>Mô tả</h5>
-                    <div>@Html.Raw(Model.Description)</div>
-                </div>
-            }
-            *@
-
             <div class="mt-5">
                 <h5>Gửi đánh giá</h5>
-                <form asp-controller="Reviews" asp-action="Add" method="post" class="row g-2">
-                    <input type="hidden" name="productId" value="@Model.Id" />
-                    <div class="col-auto">
-                        <select name="stars" class="form-select">
-                            <option value="5">5 ★</option>
-                            <option value="4">4 ★</option>
-                            <option value="3">3 ★</option>
-                            <option value="2">2 ★</option>
-                            <option value="1">1 ★</option>
-                        </select>
+
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <div class="alert alert-info mt-2">
+                        Vui lòng <a asp-controller="Account" asp-action="Login">đăng nhập</a> để đánh giá sản phẩm.
                     </div>
-                    <div class="col">
-                        <input name="comment" class="form-control" placeholder="Nhận xét (tuỳ chọn)" />
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-success">Gửi</button>
-                    </div>
-                    @Html.AntiForgeryToken()
-                </form>
+                }
+                else if (hasReviewed)
+                {
+                    <div class="alert alert-secondary mt-2">Bạn đã đánh giá sản phẩm này.</div>
+                }
+                else
+                {
+                    <form asp-controller="Reviews" asp-action="Add" method="post" class="row g-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <div class="col-auto">
+                            <select name="stars" class="form-select">
+                                <option value="5">5 ★</option>
+                                <option value="4">4 ★</option>
+                                <option value="3">3 ★</option>
+                                <option value="2">2 ★</option>
+                                <option value="1">1 ★</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <input name="comment" class="form-control" placeholder="Nhận xét (tuỳ chọn)" />
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-success">Gửi</button>
+                        </div>
+                    </form>
+                }
+
                 @if (TempData["Msg"] != null)
                 {
                     <div class="alert alert-success mt-2">@TempData["Msg"]</div>

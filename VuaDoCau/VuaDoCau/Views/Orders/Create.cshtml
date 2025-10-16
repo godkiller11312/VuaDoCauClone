@@ -1,9 +1,14 @@
-﻿@{
+﻿@model VuaDoCau.Controllers.OrdersController.CheckoutForm
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
     ViewData["Title"] = "Thanh toán";
+
     var items = ViewBag.Items as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
     decimal subtotal = (ViewBag.Subtotal is decimal d1) ? d1 : 0m;
     decimal shipping = (ViewBag.Shipping is decimal d2) ? d2 : 0m;
     decimal total = (ViewBag.Total is decimal d3) ? d3 : 0m;
+
     string VND(decimal v) => $"{v:N0} đ";
 }
 
@@ -59,20 +64,39 @@
         <div class="col-12 col-lg-4">
             <div class="card p-3">
                 <h5 class="fw-bold mb-3">Thông tin nhận hàng</h5>
-                <form method="post" asp-action="Create">
+
+                <form asp-action="Create" method="post" novalidate>
                     @Html.AntiForgeryToken()
+
                     <div class="mb-2">
-                        <label class="form-label">Họ tên</label>
-                        <input name="fullName" class="form-control" placeholder="Ví dụ: Nguyễn Văn A" />
+                        <label asp-for="ReceiverName" class="form-label"></label>
+                        <input asp-for="ReceiverName" class="form-control" placeholder="Ví dụ: Nguyễn Văn A" />
+                        <span asp-validation-for="ReceiverName" class="text-danger small"></span>
                     </div>
+
                     <div class="mb-2">
-                        <label class="form-label">SĐT</label>
-                        <input name="phone" class="form-control" placeholder="Ví dụ: 09xx xxx xxx" />
+                        <label asp-for="Phone" class="form-label"></label>
+                        <input asp-for="Phone" class="form-control" placeholder="Ví dụ: 09xx xxx xxx" />
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
                     </div>
+
+                    <div class="mb-2">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" placeholder="email@domain.com (tuỳ chọn)" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
                     <div class="mb-3">
-                        <label class="form-label">Địa chỉ</label>
-                        <textarea name="address" rows="3" class="form-control" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"></textarea>
+                        <label asp-for="Address" class="form-label"></label>
+                        <textarea asp-for="Address" rows="3" class="form-control" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"></textarea>
+                        <span asp-validation-for="Address" class="text-danger small"></span>
                     </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Note" class="form-label"></label>
+                        <textarea asp-for="Note" rows="2" class="form-control" placeholder="Ghi chú cho shipper (tuỳ chọn)"></textarea>
+                    </div>
+
                     <button class="btn btn-primary w-100" type="submit">Đặt hàng</button>
                     <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Quay lại giỏ</a>
                 </form>
@@ -80,3 +104,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,5 +1,6 @@
 ﻿@using VuaDoCau.Models
 @model ProfileViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Hồ sơ cá nhân";
@@ -12,6 +13,9 @@
             || s.Equals("Cho xac nhan", System.StringComparison.OrdinalIgnoreCase);
     }
     bool IsShipping(string s) => string.Equals((s ?? "").Trim(), "Shipping", System.StringComparison.OrdinalIgnoreCase);
+
+    int? rateOrderId = null;
+    if (TempData["RateOrderId"] is int idFromTemp) rateOrderId = idFromTemp;
 }
 
 <div class="container py-4">
@@ -23,8 +27,6 @@
         <div><strong>SDT:</strong> @Model.PhoneNumber</div>
         <div><strong>Địa chỉ:</strong> @Model.Address</div>
     </div>
-
-    <!-- Không hiển thị bất kỳ alert/TempData nào ở Profile -->
 
     <h3 class="mb-3">Lịch sử đơn hàng</h3>
 
@@ -78,16 +80,47 @@
                             <td colspan="4" class="text-muted">
                                 @if (order.Items != null && order.Items.Any())
                                 {
-                                    <div>
+                                    <div class="mb-2">
                                         @foreach (var it in order.Items)
                                         {
                                             <div><span>@it.ProductName × @it.Quantity</span></div>
                                         }
                                     </div>
+
+                                    @* Nếu vừa hoàn tất đơn này → hiện block đánh giá *@
+                                    @if (rateOrderId.HasValue && rateOrderId.Value == order.Id)
+                                    {
+                                        <div class="border rounded p-3 bg-light">
+                                            <div class="fw-bold mb-2">Đánh giá sản phẩm cho đơn #@order.Id</div>
+
+                                            @foreach (var it in order.Items)
+                                            {
+                                                <div class="border rounded p-2 mb-3">
+                                                    <div class="mb-2">@it.ProductName</div>
+                                                    <form asp-controller="Reviews" asp-action="Add" method="post" class="d-flex gap-2 flex-wrap">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="productId" value="@it.ProductId" />
+
+                                                        <div class="d-flex align-items-center gap-1">
+                                                            @for (var s = 1; s <= 5; s++)
+                                                            {
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input" type="radio" name="stars" id="p@it.ProductId-s@s" value="@s" @(s == 5 ? "checked" : null) />
+                                                                    <label class="form-check-label" for="p@it.ProductId-s@s">@s★</label>
+                                                                </div>
+                                                            }
+                                                        </div>
+
+                                                        <input name="comment" class="form-control flex-grow-1" placeholder="Nhận xét (tuỳ chọn)" />
+                                                        <button class="btn btn-primary btn-sm" type="submit">Gửi đánh giá</button>
+                                                    </form>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
                                 }
                                 else
                                 {
-
                                     <span>(Không có dòng hàng)</span>
                                 }
                             </td>
