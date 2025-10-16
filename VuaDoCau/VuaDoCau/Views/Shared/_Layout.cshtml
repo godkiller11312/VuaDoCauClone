@@ -118,6 +118,7 @@
                                 <li><hr class="dropdown-divider" /></li>
                                 <li>
                                     <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
+                                        @Html.AntiForgeryToken()
                                         <button type="submit" class="btn btn-danger w-100">Đăng xuất</button>
                                     </form>
                                 </li>
@@ -138,6 +139,40 @@
 
     <!-- MAIN -->
     <main role="main" class="flex-fill">
+
+        <!-- ======= ALERTS / TempData MESSAGES ======= -->
+        <div class="container">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show text-center mt-3 auto-dismiss" role="alert">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show text-center mt-3 auto-dismiss" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @* Tuỳ chọn thêm các loại khác *@
+            @if (TempData["Info"] != null)
+            {
+                <div class="alert alert-info alert-dismissible fade show text-center mt-3 auto-dismiss" role="alert">
+                    @TempData["Info"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Warning"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show text-center mt-3 auto-dismiss" role="alert">
+                    @TempData["Warning"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+        <!-- ======= END ALERTS ======= -->
         @RenderBody()
     </main>
 
@@ -187,6 +222,22 @@
     </footer>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Tự đóng tất cả alert có class auto-dismiss sau 4 giây
+        window.addEventListener('DOMContentLoaded', function () {
+            const alerts = document.querySelectorAll('.auto-dismiss');
+            alerts.forEach(function (el) {
+                setTimeout(function () {
+                    try {
+                        const bsAlert = new bootstrap.Alert(el);
+                        bsAlert.close();
+                    } catch (e) { /* ignore */ }
+                }, 4000);
+            });
+        });
+    </script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

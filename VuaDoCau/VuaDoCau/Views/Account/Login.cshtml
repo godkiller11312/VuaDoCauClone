@@ -1,6 +1,8 @@
-﻿@{
+﻿@model VuaDoCau.Controllers.LoginVm
+@{
     ViewData["Title"] = "Đăng nhập";
 }
+
 <div class="container min-vh-100 d-flex align-items-center py-5">
     <div class="row w-100">
         <div class="col-12 col-md-8 col-lg-5 mx-auto">
@@ -8,23 +10,47 @@
                 <div class="card-body p-4">
                     <h1 class="h3 mb-3 text-center">Đăng nhập</h1>
 
-                    <form asp-action="Login" method="post" novalidate>
+                    <form asp-action="Login"
+                          asp-controller="Account"
+                          method="post"
+                          novalidate
+                          autocomplete="off">
+                        @* chặn autofill tổng thể *@
                         @Html.AntiForgeryToken()
 
+                        <!-- input mồi để tránh Chrome/Edge tự điền -->
+                        <input type="text" name="fake_username" class="d-none" tabindex="-1" autocomplete="off" />
+                        <input type="password" name="fake_password" class="d-none" tabindex="-1" autocomplete="new-password" />
+
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input name="Email" type="email" class="form-control" placeholder="you@email.com" required />
+                            <label class="form-label" asp-for="Email">Email</label>
+                            <input asp-for="Email"
+                                   type="email"
+                                   class="form-control"
+                                   placeholder="you@email.com"
+                                   inputmode="email"
+                                   spellcheck="false"
+                                   autocapitalize="off" autocorrect="off"
+                                   autocomplete="username" />
+                            <span class="text-danger small" asp-validation-for="Email"></span>
                         </div>
 
                         <div class="mb-2">
-                            <label class="form-label">Mật khẩu</label>
-                            <input name="Password" type="password" class="form-control" placeholder="••••••••" required />
+                            <label class="form-label" asp-for="Password">Mật khẩu</label>
+                            <input asp-for="Password"
+                                   type="password"
+                                   class="form-control"
+                                   placeholder="••••••••"
+                                   autocomplete="current-password" />
+                            <span class="text-danger small" asp-validation-for="Password"></span>
                         </div>
 
                         <div class="form-check my-2">
-                            <input class="form-check-input" type="checkbox" name="RememberMe" id="rememberMe">
+                            <input class="form-check-input" asp-for="RememberMe" id="rememberMe">
                             <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
                         </div>
+
+                        <input type="hidden" asp-for="ReturnUrl" />
 
                         <button class="btn btn-primary w-100 mt-2" type="submit">Đăng nhập</button>
                     </form>
@@ -38,3 +64,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

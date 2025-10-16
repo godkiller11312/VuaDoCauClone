@@ -89,7 +89,7 @@ static async Task SeedIdentityAsync(IServiceProvider sv)
 
     var adminEmail = "admin@vuadocau.local";
     var admin = await userMgr.FindByEmailAsync(adminEmail);
-    if (admin == null)
+    if (admin == null) 
     {
         admin = new ApplicationUser
         {

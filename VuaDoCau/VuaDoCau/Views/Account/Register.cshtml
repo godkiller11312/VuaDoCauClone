@@ -1,4 +1,5 @@
-﻿@{
+﻿@model VuaDoCau.Controllers.RegisterVm
+@{
     ViewData["Title"] = "Đăng ký";
 }
 <div class="container min-vh-100 d-flex align-items-center py-5">
@@ -8,32 +9,47 @@
                 <div class="card-body p-4">
                     <h1 class="h3 mb-3 text-center">Tạo tài khoản</h1>
 
+                    <!-- TÓM TẮT LỖI -->
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
                     <form asp-action="Register" method="post" novalidate>
                         @Html.AntiForgeryToken()
+
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Họ tên</label>
-                                <input name="FullName" class="form-control" placeholder="Nguyễn Văn A" required />
+                                <label class="form-label" asp-for="FullName">Họ tên</label>
+                                <input class="form-control" asp-for="FullName" placeholder="Nguyễn Văn A" />
+                                <span class="text-danger small" asp-validation-for="FullName"></span>
                             </div>
+
                             <div class="col-md-6">
-                                <label class="form-label">SĐT</label>
-                                <input name="PhoneNumber" class="form-control" placeholder="09xx xxx xxx" />
+                                <label class="form-label" asp-for="Phone">SĐT</label>
+                                <input class="form-control" asp-for="Phone" placeholder="09xx xxx xxx" />
+                                <span class="text-danger small" asp-validation-for="Phone"></span>
                             </div>
+
                             <div class="col-md-6">
-                                <label class="form-label">Email</label>
-                                <input name="Email" type="email" class="form-control" placeholder="you@email.com" required />
+                                <label class="form-label" asp-for="Email">Email</label>
+                                <input class="form-control" asp-for="Email" type="email" placeholder="you@email.com" />
+                                <span class="text-danger small" asp-validation-for="Email"></span>
                             </div>
+
                             <div class="col-md-6">
-                                <label class="form-label">Địa chỉ</label>
-                                <input name="Address" class="form-control" placeholder="Số nhà, đường, phường/xã..." />
+                                <label class="form-label" asp-for="Address">Địa chỉ</label>
+                                <input class="form-control" asp-for="Address" placeholder="Số nhà, đường, phường/xã..." />
+                                <span class="text-danger small" asp-validation-for="Address"></span>
                             </div>
+
                             <div class="col-md-6">
-                                <label class="form-label">Mật khẩu</label>
-                                <input name="Password" type="password" class="form-control" placeholder="••••••••" required />
+                                <label class="form-label" asp-for="Password">Mật khẩu</label>
+                                <input class="form-control" asp-for="Password" type="password" placeholder="••••••••" />
+                                <span class="text-danger small" asp-validation-for="Password"></span>
                             </div>
+
                             <div class="col-md-6">
-                                <label class="form-label">Xác nhận</label>
-                                <input name="ConfirmPassword" type="password" class="form-control" placeholder="Nhập lại mật khẩu" required />
+                                <label class="form-label" asp-for="ConfirmPassword">Xác nhận</label>
+                                <input class="form-control" asp-for="ConfirmPassword" type="password" placeholder="Nhập lại mật khẩu" />
+                                <span class="text-danger small" asp-validation-for="ConfirmPassword"></span>
                             </div>
                         </div>
 
@@ -49,3 +65,8 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <!-- Bắt buộc để client-side validation hoạt động -->
+    <partial name="_ValidationScriptsPartial" />
+}
